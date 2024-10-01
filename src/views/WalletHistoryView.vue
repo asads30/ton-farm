@@ -1,7 +1,7 @@
 <template>
     <main>
         <div class="pb-4 text-center">
-          <h2 class="font-pixeboy text-3xl text-white">Wallet</h2>
+          <h2 class="font-patsy text-3xl text-white">Wallet</h2>
         </div>
         <div class="profile-card">
           <div class="main-circle-gradient h-11 w-11 p-1">
@@ -9,7 +9,7 @@
           </div>
           <div class="pl-2">
             <p class="text-sm text-white">Nick Jay</p>
-            <p class="font-pixeboy text-amber-400">Level 8</p>
+            <p class="font-patsy text-amber-400">Level 8</p>
           </div>
           <div class="ml-auto mr-10">
             <div class="flex items-center font-geist-mono text-blue-400">
@@ -92,3 +92,19 @@
         </div>
     </main>
 </template>
+
+<script>
+export default {
+  name: 'WalletHistoryView',
+  mounted() {
+    let tg = window?.Telegram?.WebApp;
+    tg.BackButton.show();
+    tg.onEvent('backButtonClicked', this.goBack);
+  },
+  methods: {
+    goBack(){
+      this.$router.push('/wallet')
+    }
+  },
+}
+</script>

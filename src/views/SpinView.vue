@@ -1,80 +1,68 @@
 <template>
-    <main>
-        <div class="pb-4 text-center">
-          <h2 class="font-pixeboy text-3xl text-cyan-200">Spin the wheel</h2>
+  <main class="flex flex-col">
+    <div class="pb-4 text-center">
+      <h2 class="font-patsy text-3xl text-cyan-200">Spin the wheel</h2>
+    </div>
+    <div class="inline-aside-lights flex-1 flex flex-col">
+      <div class="relative overflow-hidden flex-1">
+        <img class="position-center-y scale-110" src="@/assets/images/spin-bg.png" />
+        <div
+          class="position-center-y"
+          :class="{ clicked }"
+          :style="`--rotation-duration: ${rotationDuration}ms`"
+        >
+          <div class="spin-items">
+            <img
+              v-for="(item, index) in images"
+              :style="`
+              transform: rotate(${
+                30 + (index * 360) / images.length
+              }deg) translate(110px) rotate(-${(index * 360) / images.length}deg)`"
+              src="@/assets/images/stations/01.png"
+            />
+          </div>
+          <img class="aspect-square" src="@/assets/images/wheel-fortune.png" />
         </div>
-        <div class="inline-aside-lights flex h-[95%] flex-col">
-          <div class="relative flex-1">
-            <img class="position-center-y scale-110" src="@/assets/images/spin-bg.png" />
-            <div class="position-center-y">
-              <div class="spin-items">
-                <img style="--deg: 0" src="@/assets/images/stations/01.png" />
-                <img style="--deg: 135deg" src="@/assets/images/stations/01.png" />
-                <img style="--deg: 225deg" src="@/assets/images/stations/01.png" />
-              </div>
-              <img
-                class="position-center-x z-10 w-8"
-                src="@/assets/images/icons/pointer.png"
-              />
-              <img src="@/assets/images/wheel-fortune.png" />
-            </div>
-          </div>
-          <div class="flex-[20%] flex-grow-0">
-            <div class="main-action--green mx-5">
-              <div class="mx-auto flex items-center py-1 text-sm">
-                <p class="pr-2 text-white">Spin the wheel</p>
-              </div>
-            </div>
-          </div>
-        </div>
-    </main>
-    <!-- MODAL -->
-    <section class="modal border-radiant">
-        <button class="absolute right-5 top-5">
-          <img class="w-6" src="@/assets/images/icons/close.png" />
-        </button>
-        <div class="pb-4">
-          <div class="pb-1 text-center">
-            <h4 class="font-pixeboy text-3xl text-yellow-300">YOU WON!</h4>
-          </div>
-          <div class="pb-1 text-center">
-            <h4 class="font-pixeboy text-lg text-white">ProCore XT-500</h4>
-          </div>
-          <div class="mx-auto max-w-36 pb-4">
-            <img src="@/assets/images/stations/01.png" />
-          </div>
-          <div class="rounded-lg border border-dashed border-cyan-400/65">
-            <div class="grid content-center p-3">
-              <div class="flex items-center pb-3">
-                <img
-                  class="h-8 w-8 flex-shrink-0 object-contain"
-                  src="@/assets/images/icons/ton-hour-slate.png"
-                />
-                <div class="mr-auto pl-3 text-xs">Mining speed</div>
-                <div class="font-geist-mono text-sm font-bold text-cyan-400">
-                  0.1 TON/h
-                </div>
-              </div>
-              <div class="main-blue-gradient"></div>
-              <div class="flex items-center pt-3">
-                <img
-                  class="h-8 w-8 flex-shrink-0 object-contain"
-                  src="@/assets/images/icons/lightning.png"
-                />
-                <div class="mr-auto pl-3 text-xs">Mining speed</div>
-                <div class="font-geist-mono text-sm font-bold text-cyan-400">
-                  5 units/h
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="pt-6">
-            <div class="main-action--green">
-              <div class="mx-auto flex items-center py-1 text-sm">
-                <p class="pr-2 text-white">Claim</p>
-              </div>
-            </div>
+        <img class="position-center-x z-10 w-8" src="@/assets/images/icons/pointer.png" />
+      </div>
+      <div class="mb-10">
+        <div class="main-action--green mx-5" @click="rotation">
+          <div class="mx-auto flex items-center py-1 text-sm">
+            <p class="pr-2 text-white">Spin the wheel</p>
           </div>
         </div>
-    </section>
+      </div>
+    </div>
+  </main>
+  <Modal />
 </template>
+
+<script>
+import Modal from '@/components/Spin/Modal.vue'
+
+export default {
+  data() {
+    return {
+      images: Array.from({ length: 3 }),
+      clicked: false,
+      rotationDuration: 500,
+    };
+  },
+  components: {
+    Modal
+  },
+  methods: {
+    rotation() {
+      this.clicked = !this.clicked;
+      setTimeout(() => (this.clicked = !this.clicked), this.rotationDuration);
+    },
+  },
+};
+</script>
+
+<style>
+.clicked {
+  transform: rotate(360deg);
+  transition: transform var(--rotation-duration) ease-in-out;
+}
+</style>

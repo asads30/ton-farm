@@ -39,6 +39,7 @@
   padding: 20px;
   max-height: 90svh;
   height: fit-content;
+  overflow-y: auto;
   z-index: 20;
   background: var(--main-gradient);
 
@@ -52,15 +53,19 @@
   align-items: center;
   backdrop-filter: blur(7px);
   box-shadow: inset -2px -1px 9px 0 rgba(11, 197, 255, 0.55);
-  background:
-    linear-gradient(
-      171deg,
-      rgba(34, 39, 56, 0.21) 0%,
-      rgba(5, 18, 51, 0.21) 100%
-    ),
+  background: linear-gradient(171deg, rgba(34, 39, 56, 0.21) 0%, rgba(5, 18, 51, 0.21) 100%),
     url("../images/profile-card-bg.png") right 4px center / 80% no-repeat;
   border-radius: 25px;
   padding: 3px;
+}
+
+.home-bg-main {
+  position: absolute;
+  top: 55px;
+  left: 0;
+  height: 40rem;
+  width: 100%;
+  z-index: -1;
 }
 
 .position-center {
@@ -250,7 +255,7 @@ button:disabled {
 
   min-width: 25px;
   text-align: center;
-  padding: 1px 5px;
+  padding: 1px 3px;
   border-radius: var(--_radius);
 
   &::before,
@@ -366,27 +371,21 @@ button:disabled {
 }
 
 .main-action--cyan::before {
-  box-shadow:
-    0 4px 10px 0 rgba(0, 0, 0, 0.21),
-    inset 0 -3px 9px 0 rgba(11, 197, 255, 0.55);
+  box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.21), inset 0 -3px 9px 0 rgba(11, 197, 255, 0.55);
 }
 .main-action--cyan::after {
   background: linear-gradient(180deg, rgba(11, 197, 255, 0) 0%, #0bc5ff 100%);
 }
 
 .main-action--green::before {
-  box-shadow:
-    0 4px 10px 0 rgba(0, 0, 0, 0.21),
-    inset 0 -3px 9px 0 #3cff0b8c;
+  box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.21), inset 0 -3px 9px 0 #3cff0b8c;
 }
 .main-action--green::after {
   background: linear-gradient(180deg, #222738 0%, #0bff15 100%);
 }
 
 .main-action--fuchsia::before {
-  box-shadow:
-    0px 4px 10px 0px rgba(0, 0, 0, 0.21),
-    0px -3px 9px 0px rgba(199, 89, 121, 0.55) inset;
+  box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.21), 0px -3px 9px 0px rgba(199, 89, 121, 0.55) inset;
 }
 .main-action--fuchsia::after {
   background: linear-gradient(180deg, rgba(199, 89, 121, 0) 0%, #c75979 100%);
@@ -424,9 +423,7 @@ button:disabled {
 .circle-progress circle {
   --_radius: 10;
   --_dasharray: calc(2 * 3.14 * var(--_radius));
-  --_dashoffset: calc(
-    var(--_dasharray) - (var(--_dasharray) * var(--percentage)) / 100
-  );
+  --_dashoffset: calc(var(--_dasharray) - (var(--_dasharray) * var(--percentage)) / 100);
 
   r: var(--_radius);
   cx: 13;

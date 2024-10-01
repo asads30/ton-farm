@@ -27,7 +27,8 @@ const routes = [
   {
     path: '/boost',
     name: 'boost',
-    component: BoostView
+    component: BoostView,
+    props: true
   },
   {
     path: '/farm',

@@ -1,26 +1,26 @@
 <template>
     <main>
         <div class="pb-4 text-center">
-          <h2 class="font-pixeboy text-3xl text-cyan-200">Store</h2>
+          <h2 class="font-patsy text-3xl text-cyan-200">Store</h2>
         </div>
         <div class="grid grid-cols-3 gap-2">
-          <button class="main-tab-button active">
+          <button :class="active === 1 ? 'main-tab-button active' : 'main-tab-button'" @click="goActive(1)">
             <span class="text-sm text-white">Asics</span>
           </button>
-          <button class="main-tab-button">
+          <button :class="active === 2 ? 'main-tab-button active' : 'main-tab-button'" @click="goActive(2)">
             <span class="text-sm text-white">Loot box</span>
           </button>
-          <button class="main-tab-button">
+          <button :class="active === 3 ? 'main-tab-button active' : 'main-tab-button'" @click="goActive(3)">
             <span class="text-sm text-white">Other</span>
           </button>
         </div>
         <!-- TAB 1 CONTENT -->
-        <div class="block">
+        <div :class="active === 1 ? 'block' : 'hidden'">
           <div class="inline-aside-lights my-8">
             <article class="relative px-3 pb-10 pt-6">
               <div class="grid grid-cols-2 gap-5">
                 <div class="relative">
-                  <h5 class="text-center font-pixeboy text-lg text-white">
+                  <h5 class="text-center font-patsy text-lg text-white">
                     ProCore XT-500
                   </h5>
                   <div class="mx-auto h-28 w-28">
@@ -74,7 +74,7 @@
             <article class="relative px-3 pb-10 pt-6">
               <div class="grid grid-cols-2 gap-5">
                 <div class="relative">
-                  <h5 class="text-center font-pixeboy text-lg text-white">
+                  <h5 class="text-center font-patsy text-lg text-white">
                     ProCore XT-500
                   </h5>
                   <div class="mx-auto h-28 w-28">
@@ -128,7 +128,7 @@
             <article class="relative px-3 pb-10 pt-6">
               <div class="grid grid-cols-2 gap-5">
                 <div class="relative">
-                  <h5 class="text-center font-pixeboy text-lg text-white">
+                  <h5 class="text-center font-patsy text-lg text-white">
                     ProCore XT-500
                   </h5>
                   <div class="mx-auto h-28 w-28">
@@ -182,12 +182,12 @@
           </div>
         </div>
         <!-- TAB 2 CONTENT -->
-        <div class="hidden">
+        <div :class="active === 2 ? 'block' : 'hidden'">
           <div class="inline-aside-lights my-8">
             <article class="relative px-3 pb-10 pt-6">
               <div class="grid grid-cols-2 gap-3">
                 <div class="relative">
-                  <h5 class="text-center font-pixeboy text-lg text-white">
+                  <h5 class="text-center font-patsy text-lg text-white">
                     Treasure Vault
                   </h5>
                   <div class="mx-auto h-28 w-28">
@@ -230,7 +230,7 @@
             <article class="relative px-3 pb-10 pt-6">
               <div class="grid grid-cols-2 gap-3">
                 <div class="relative">
-                  <h5 class="text-center font-pixeboy text-lg text-white">
+                  <h5 class="text-center font-patsy text-lg text-white">
                     Treasure Vault
                   </h5>
                   <div class="mx-auto h-28 w-28">
@@ -273,7 +273,7 @@
             <article class="relative px-3 pb-10 pt-6">
               <div class="grid grid-cols-2 gap-3">
                 <div class="relative">
-                  <h5 class="text-center font-pixeboy text-lg text-white">
+                  <h5 class="text-center font-patsy text-lg text-white">
                     Treasure Vault
                   </h5>
                   <div class="mx-auto h-28 w-28">
@@ -316,12 +316,12 @@
           </div>
         </div>
         <!-- TAB 3 CONTENT -->
-        <div class="hidden">
+        <div :class="active === 3 ? 'block' : 'hidden'">
           <div class="inline-aside-lights my-8">
             <article class="relative px-3 pb-10 pt-6">
               <div class="grid grid-cols-2 gap-5">
                 <div class="relative">
-                  <h5 class="text-center font-pixeboy text-lg text-white">
+                  <h5 class="text-center font-patsy text-lg text-white">
                     ProCore XT-500
                   </h5>
                   <div class="mx-auto h-28 w-28">
@@ -362,7 +362,7 @@
             <article class="relative px-3 pb-10 pt-6">
               <div class="grid grid-cols-2 gap-5">
                 <div class="relative">
-                  <h5 class="text-center font-pixeboy text-lg text-white">
+                  <h5 class="text-center font-patsy text-lg text-white">
                     ProCore XT-500
                   </h5>
                   <div class="mx-auto h-28 w-28">
@@ -403,7 +403,7 @@
             <article class="relative px-3 pb-10 pt-6">
               <div class="grid grid-cols-2 gap-5">
                 <div class="relative">
-                  <h5 class="text-center font-pixeboy text-lg text-white">
+                  <h5 class="text-center font-patsy text-lg text-white">
                     ProCore XT-500
                   </h5>
                   <div class="mx-auto h-28 w-28">
@@ -444,7 +444,7 @@
             <article class="relative px-3 pb-10 pt-6">
               <div class="grid grid-cols-2 gap-5">
                 <div class="relative">
-                  <h5 class="text-center font-pixeboy text-lg text-white">
+                  <h5 class="text-center font-patsy text-lg text-white">
                     ProCore XT-500
                   </h5>
                   <div class="mx-auto h-28 w-28">
@@ -485,7 +485,7 @@
             <article class="relative px-3 pb-10 pt-6">
               <div class="grid grid-cols-2 gap-5">
                 <div class="relative">
-                  <h5 class="text-center font-pixeboy text-lg text-white">
+                  <h5 class="text-center font-patsy text-lg text-white">
                     ProCore XT-500
                   </h5>
                   <div class="mx-auto h-28 w-28">
@@ -526,71 +526,28 @@
           </div>
         </div>
     </main>
-    <!-- MODAL for Loot box -->
-        <!-- <section class="modal border-radiant">
-            <button class="absolute right-5 top-5">
-            <img class="w-6" src="@/assets/images/icons/close.png" />
-            </button>
-            <div class="py-4">
-            <div class="pb-1 text-center">
-                <h4 class="font-pixeboy text-lg text-white">Treasure Vault</h4>
-            </div>
-            <div class="mx-auto max-w-36 pb-10">
-                <img src="@/assets/images/stations/03.png" />
-            </div>
-            <div class="rounded-lg border border-dashed border-cyan-400/65">
-                <div class="p-2 text-center">
-                <div class="pb-1 text-[10px]">Chance of getting better Asic</div>
-                <div class="font-geist-mono text-2xl font-semibold text-cyan-400">
-                    25%
-                </div>
-                </div>
-            </div>
-            <div class="main-action--green mt-10">
-                <div class="mx-auto flex items-center py-1 text-sm">
-                <p class="pr-2 text-white">Pay</p>
-                <p class="font-geist-mono font-semibold text-cyan-400">
-                    0.43 TON
-                </p>
-                </div>
-            </div>
-        </div>
-        </section> -->
-    <!-- MODAL for Other -->
-     <!-- 
-      <section class="modal border-radiant">
-        <button class="absolute right-5 top-5">
-          <img class="w-6" src="@/assets/images/icons/close.png" />
-        </button>
-        <div class="py-4">
-          <div class="mx-auto max-w-36 pb-8">
-            <img src="@/assets/images/stations/02.png" />
-          </div>
-          <div class="rounded-lg border border-dashed border-cyan-400/65">
-            <div class="grid content-center p-3">
-              <div class="flex items-center">
-                <img
-                  class="h-8 w-8 flex-shrink-0 object-contain"
-                  src="@/assets/images/icons/lightning.png"
-                />
-                <div class="mr-auto pl-3 text-xs">Power</div>
-                <div class="font-geist-mono text-sm font-bold text-cyan-400">
-                  2 units
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="pt-6">
-            <div class="main-action--green">
-              <div class="mx-auto flex items-center py-1 text-sm">
-                <p class="pr-2 text-white">Repair</p>
-                <p class="font-geist-mono font-semibold text-cyan-400">
-                  0.43 TON
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-      -->
 </template>
+
+<script>
+export default {
+  name: 'StoreView',
+  data() {
+    return {
+      active: 1
+    }
+  },
+  mounted() {
+    let tg = window?.Telegram?.WebApp;
+    tg.BackButton.show();
+    tg.onEvent('backButtonClicked', this.goHome);
+  },
+  methods: {
+    goHome(){
+      this.$router.push('/')
+    },
+    goActive(num){
+      this.active = num
+    }
+  },
+}
+</script>

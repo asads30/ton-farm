@@ -1,11 +1,11 @@
 <template>
     <main>
         <div class="pb-4 text-center">
-          <h2 class="font-pixeboy text-3xl text-white">Power station</h2>
+          <h2 class="font-patsy text-3xl text-white">Power station</h2>
         </div>
         <div class="grid grid-cols-2 gap-5 py-6">
           <div class="relative">
-            <h5 class="-mb-4 text-center font-pixeboy text-lg">
+            <h5 class="-mb-4 text-center font-patsy text-lg">
               <span class="text-white">Level 1</span> /5
             </h5>
             <div class="max-w-40">
@@ -53,7 +53,7 @@
               </div>
             </div>
             <div class="main-action--green mt-4">
-              <div class="mx-auto flex items-center text-sm">
+              <div class="mx-auto flex items-center text-sm" @click="goMoreInfo">
                 <p class="pr-2 text-white">More info</p>
               </div>
             </div>
@@ -83,7 +83,7 @@
                 class="mx-auto mb-1 block w-8"
                 src="@/assets/images/icons/lock-fuchsia.png"
               />
-              <p class="pl-1 font-pixeboy text-sm text-rose-400">Locked</p>
+              <p class="pl-1 font-patsy text-sm text-rose-400">Locked</p>
             </div>
             <img
               class="figure-shape--bg"
@@ -96,7 +96,7 @@
                 class="mx-auto mb-1 block w-8"
                 src="@/assets/images/icons/lock-fuchsia.png"
               />
-              <p class="pl-1 font-pixeboy text-sm text-rose-400">Locked</p>
+              <p class="pl-1 font-patsy text-sm text-rose-400">Locked</p>
             </div>
             <img
               class="figure-shape--bg"
@@ -109,7 +109,7 @@
                 class="mx-auto mb-1 block w-8"
                 src="@/assets/images/icons/lock-fuchsia.png"
               />
-              <p class="pl-1 font-pixeboy text-sm text-rose-400">Locked</p>
+              <p class="pl-1 font-patsy text-sm text-rose-400">Locked</p>
             </div>
             <img
               class="figure-shape--bg"
@@ -122,7 +122,7 @@
                 class="mx-auto mb-1 block w-8"
                 src="@/assets/images/icons/lock-fuchsia.png"
               />
-              <p class="pl-1 font-pixeboy text-sm text-rose-400">Locked</p>
+              <p class="pl-1 font-patsy text-sm text-rose-400">Locked</p>
             </div>
             <img
               class="figure-shape--bg"
@@ -132,3 +132,22 @@
         </div>
     </main>
 </template>
+
+<script>
+export default {
+  name: 'PowerStationView',
+  mounted() {
+    let tg = window?.Telegram?.WebApp;
+    tg.BackButton.show();
+    tg.onEvent('backButtonClicked', this.goHome);
+  },
+  methods: {
+    goHome(){
+      this.$router.push('/')
+    },
+    goMoreInfo(){
+      this.$router.push({ name: 'boost', query: {power: 'active' }})
+    }
+  },
+}
+</script>

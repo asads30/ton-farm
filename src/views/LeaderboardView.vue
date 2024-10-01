@@ -1,7 +1,7 @@
 <template>
     <main>
         <div class="pb-4 text-center">
-          <h2 class="font-pixeboy text-3xl text-white">Leaderboard</h2>
+          <h2 class="font-patsy text-3xl text-white">Leaderboard</h2>
         </div>
         <div class="grid gap-2">
           <article class="relative p-2">
@@ -214,3 +214,19 @@
         </div>
     </main>
 </template>
+
+<script>
+export default {
+  name: 'LeaderboardView',
+  mounted() {
+    let tg = window?.Telegram?.WebApp;
+    tg.BackButton.show();
+    tg.onEvent('backButtonClicked', this.goBack);
+  },
+  methods: {
+    goBack(){
+      this.$router.push('/info')
+    },
+  },
+}
+</script>

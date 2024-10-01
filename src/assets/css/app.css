@@ -10,6 +10,21 @@
 /* @tailwind components; */
 @tailwind utilities;
 
+*{
+  -webkit-touch-callout: none;
+}
+
+:root {
+  overscroll-behavior: none;
+}
+
+#app{
+  -webkit-overflow-scrolling: -webkit-overflow-scrolling;
+  overflow-y: auto;
+  width: 100vw;
+  height: 100dvh;
+}
+
 body {
   font-family: Geist;
   background: var(--main-gradient);
@@ -17,17 +32,16 @@ body {
 }
 
 .wrapper {
-  padding: 1rem;
   display: flex;
   flex-direction: column;
-  height: 100%;
   background: var(--main-gradient);
-
+  height: 100%;
+  overflow: hidden;
 
   > main {
     z-index: 4;
+    padding: 5px;
     flex: 1 1 auto;
-    min-height: 36rem;
+    overflow: auto;
   }
 }
-
