@@ -18,7 +18,7 @@
               transform: rotate(${
                 30 + (index * 360) / images.length
               }deg) translate(110px) rotate(-${(index * 360) / images.length}deg)`"
-              src="@/assets/images/stations/01.png"
+              src="@/assets/images/stations/03.png"
             />
           </div>
           <img class="aspect-square" src="@/assets/images/wheel-fortune.png" />

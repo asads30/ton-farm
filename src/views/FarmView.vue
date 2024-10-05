@@ -14,17 +14,28 @@
         <div class="bg-shape-radial--fuchsia h-28 w-80 blur-3xl"></div>
       </div>
       <div class="grid content-center pt-10">
-        <div class="flex pb-2">
-          <img class="h-8 w-8 flex-shrink-0" src="@/assets/images/icons/ton-slate.png" />
+        <div class="flex py-1">
+          <img class="h-9 w-9 flex-shrink-0 grayscale" src="@/assets/images/icons/generator.png" />
           <div class="pl-3">
-            <p class="text-xs">Total mined</p>
+            <p class="text-xs">UPS</p>
+            <p class="font-geist-mono text-xs font-semibold">
+              Not installed
+              <!-- <span class="text-green-500">Installed</span> -->
+            </p>
+          </div>
+        </div>
+        <div class="main-blue-gradient"></div>
+        <div class="flex py-1 items-center">
+          <img class="h-9 w-9 flex-shrink-0" src="@/assets/images/icons/ton-slate.png" />
+          <div class="pl-3">
+            <p class="text-xs">uninterrupted operation</p>
             <p class="font-geist-mono font-semibold text-cyan-400">
               247 <span class="text-xs">TON</span>
             </p>
           </div>
         </div>
         <div class="main-blue-gradient"></div>
-        <div class="flex pt-2">
+        <div class="flex py-1">
           <img class="h-8 w-8 flex-shrink-0" src="@/assets/images/icons/power-consumption.png" />
           <div class="pl-3">
             <p class="text-xs">Power consumption</p>
@@ -35,13 +46,34 @@
         </div>
       </div>
     </div>
+
+    <div class="main-action--green m-2">
+      <div class="mx-auto flex items-center text-sm">
+        <p class="pr-2 text-white">Boost</p>
+      </div>
+    </div>
+
+    <div class="main-action--amber m-2">
+      <div class="mx-auto flex items-center text-sm">
+        <p class="pr-2 text-white">Restart mining</p>
+      </div>
+    </div>
+
     <div class="grid grid-cols-3 gap-1 py-2">
-      <article class="figure-shape" v-for="item in list" :key="item.id" @click="showModalHandle(item)">
+      <article
+        class="figure-shape"
+        v-for="item in list"
+        :key="item.id"
+        @click="showModalHandle(item)"
+      >
         <template v-if="item.status === 1">
           <img class="figure-shape--bg" src="@/assets/images/shapes/hexagon-empty.png" />
         </template>
         <template v-if="item.status === 2">
-          <img class="aboslute position-center w-3/4" src="@/assets/images/stations/01.png" />
+          <div class="linear-border--main position-center-x">
+            <span class="text-xs text-cyan-400">75%</span>
+          </div>
+          <img class="aboslute position-center w-2/3" src="@/assets/images/stations/01.png" />
           <div class="bg-shape-radial--fuchsia h-3/4 w-3/4 blur-sm"></div>
           <img class="figure-shape--bg" src="@/assets/images/shapes/hexagon-with-item.png" />
         </template>
@@ -52,6 +84,14 @@
           </div>
           <img class="figure-shape--bg" src="@/assets/images/shapes/hexagon-locked.png" />
         </template>
+        <template v-if="item.status === 4">
+          <div class="linear-border--rose position-center-x">
+            <span class="text-xs text-rose-500">75%</span>
+          </div>
+          <img class="aboslute position-center w-2/3" src="@/assets/images/stations/01.png" />
+          <div class="bg-shape-radial--fuchsia h-3/4 w-3/4 blur-sm"></div>
+          <img class="figure-shape--bg" src="@/assets/images/shapes/hexagon-wrong.png" />
+        </template>
       </article>
     </div>
   </main>
@@ -59,72 +99,72 @@
 </template>
 
 <script>
-import Modal from '@/components/Farm/Modal.vue'
+import Modal from "@/components/Farm/Modal.vue";
 
 export default {
-  name: 'FarmView',
+  name: "FarmView",
   data() {
     return {
       list: [
         {
           id: 1,
-          title: 'Title 1',
-          status: 1
+          title: "Title 1",
+          status: 1,
         },
         {
           id: 2,
-          title: 'Title 2',
-          status: 2
+          title: "Title 2",
+          status: 2,
         },
         {
           id: 3,
-          title: 'Title 3',
-          status: 3
+          title: "Title 3",
+          status: 3,
         },
         {
           id: 4,
-          title: 'Title 3',
-          status: 3
+          title: "Title 3",
+          status: 3,
         },
         {
           id: 5,
-          title: 'Title 3',
-          status: 3
+          title: "Title 3",
+          status: 3,
         },
         {
           id: 6,
-          title: 'Title 3',
-          status: 3
-        }
+          title: "Title 3",
+          status: 4,
+        },
       ],
       showModal: false,
-      item: null
-    }
+      item: null,
+    };
   },
   components: {
-    Modal
+    Modal,
   },
   mounted() {
     let tg = window?.Telegram?.WebApp;
     tg.BackButton.show();
-    tg.onEvent('backButtonClicked', this.goHome);
+    tg.onEvent("backButtonClicked", this.goHome);
   },
   methods: {
-    goHome(){
-      this.$router.push('/')
+    goHome() {
+      this.$router.push("/");
     },
-    showModalHandle(item){
-      if(item.status === 3){
-        return false
-      } else{
-        this.showModal = true
-        this.item = item
+    showModalHandle(item) {
+      if (item.status === 3) {
+        return false;
+      } else {
+        this.showModal = true;
+        this.item = item;
       }
     },
     closeModal() {
       this.showModal = false;
       this.item = null;
-    }
+    },
   },
-}
+};
 </script>

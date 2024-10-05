@@ -47,6 +47,33 @@
           </div>
         </button>
       </div>
+
+      <div class="py-5">
+        <div class="relative mt-5 pt-2">
+          <div class="linear-border--slate p-3">
+            <div class="linear-border position-center-x -top-2 bg-gray-950/80">
+              <span class="font-sf text-xs text-blue-500">Your wallet address</span>
+            </div>
+            <div class="relative break-words pb-8">
+              <div class="pr-10 text-xs text-blue-500 absolute w-11/12">
+                0x790b44b9863599568a5b154e1a66de67f1bfd6d8f363ab03bb2b1e4e3350c313
+              </div>
+            </div>
+            <button class="absolute right-4 top-5 p-1" @click="copyLink">
+              <img class="w-4" src="@/assets/images/icons/copy.png" />
+            </button>
+            <div class="h-[1px] w-full bg-slate-800 my-2"></div>
+            <div class="flex items-center text-blue-500 text-sm">
+              <p>Network:</p>
+              <p class="ml-auto">TON</p>
+            </div>
+          </div>
+        </div>
+        <div class="text-center text-white/80 text-xs">
+          Copy your wallet address and use it as the destination address to which you can senf the
+          funds.
+        </div>
+      </div>
       <router-link to="/wallet/send" class="menu-item p-3">
         <div class="flex items-center">
           <img class="mr-3 w-7" src="@/assets/images/icons/plus-circle.png" />
@@ -84,6 +111,19 @@ export default {
   mounted() {
     let tg = window?.Telegram?.WebApp;
     tg.BackButton.hide();
+  },
+  methods: {
+    copyLink() {
+      const copyText = "https://t.me/";
+      navigator.clipboard.writeText(copyText).then(
+        function () {
+          alert("Ссылка скопирована: " + copyText);
+        },
+        function (err) {
+          console.error("Ошибка копирования ссылки: ", err);
+        }
+      );
+    },
   },
 };
 </script>

@@ -49,8 +49,9 @@
             <p class="mr-auto font-light text-zinc-300">Workshop</p>
             <p class="font-patsy text-lg">Level 3</p>
           </div>
-          <div class="h-[1px] w-full bg-slate-800"></div>
+          <div class  ="h-[1px] w-full bg-slate-800"></div>
         </div>
+
         <!-- <button class="menu-item mt-2 p-3">
           <div class="flex items-center">
             <img class="mr-3 w-7" src="@/assets/images/icons/buildings.png" />
@@ -58,6 +59,15 @@
             <img class="mr-2 w-2" src="@/assets/images/icons/chevron-right.png" />
           </div>
         </button> -->
+      </div>
+      <div class="linear-border--slate relative p-3">
+        <router-link to="/language" class="menu-item mt-2 p-2">
+          <div class="flex items-center">
+            <img class="mr-3 w-8" src="@/assets/images/icons/flag-english.png" />
+            <p class="mr-auto text-sm text-white">English</p>
+            <img class="mr-2 w-2" src="@/assets/images/icons/chevron-right.png" />
+          </div>
+        </router-link>
       </div>
     </div>
   </main>

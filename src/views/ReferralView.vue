@@ -1,8 +1,16 @@
 <template>
   <main>
-    <div class="pb-4 text-center">
+    <div class="pb-2 text-center px-1">
       <h2 class="font-patsy text-3xl text-white">Invite friends</h2>
-      <div class="text-sm font-light text-zinc-300">You and your friends will receive bonuses</div>
+      <div class="flex items-center text-xs font-light">
+        <p class="text-zinc-300">You and your friends will receive bonuses</p>
+        <button class="linear-border--slate relative ml-auto">
+          <div class="flex items-center gap-1 p-1">
+            <img class="w-5" src="@/assets/images/icons/share.png" />
+            <span class="text-white">Share</span>
+          </div>
+        </button>
+      </div>
     </div>
     <div class="profile-card">
       <div class="main-circle-gradient h-11 w-11 p-1">
@@ -19,36 +27,40 @@
         </div>
       </div>
     </div>
-    <div class="py-2">
-      <div class="grid grid-cols-2 gap-3">
-        <div class="linear-border--slate relative p-3">
-          <div class="flex items-center">
-            <p class="mr-auto text-xs">Building level</p>
-            <img class="w-3" src="@/assets/images/icons/info-circle.png" />
-          </div>
-          <p class="text-lg">2</p>
-        </div>
-        <div class="linear-border--slate relative p-3">
-          <p class="mr-auto text-xs">Total referrals</p>
-          <p class="text-lg">17</p>
-        </div>
+    <div class="linear-border--slate relative p-3 my-2">
+      <div class="flex items-center">
+        <p class="mr-auto font-light text-zinc-300 text-sm">Your referral level</p>
+        <p class="font-geist-mono text-xl">2</p>
       </div>
-      <div class="relative mt-5">
-        <div class="linear-border--slate p-4">
-          <div class="linear-border position-center-x -top-2 bg-gray-950/80">
-            <span class="font-sf text-xs text-blue-500">Referral link</span>
-          </div>
-          <div class="break-words pr-10 text-xs text-blue-500">
-            0x790b44b9863599568a5b154e1a66de67f1bfd6d8f363ab03bb2b1e4e3350c313
-          </div>
-          <button class="absolute right-4 top-5 p-1" @click="copyLink">
-            <img class="w-4" src="@/assets/images/icons/copy.png" />
-          </button>
+      <div class="h-[1px] w-full bg-slate-800 my-2"></div>
+      <div class="flex items-center text-left">
+        <p class="mr-auto font-light text-zinc-300 text-sm">
+          You receive of each referral’s total income.
+        </p>
+        <p class="font-geist-mono text-lg">5%</p>
+      </div>
+    </div>
+    <div class="linear-border--slate relative p-3 my-2">
+      <div class="flex items-center text-left">
+        <p class="mr-auto font-light text-zinc-300">Total referrals</p>
+        <p class="font-geist-mono text-lg">17</p>
+      </div>
+    </div>
+    <div class="relative mt-5 pt-2">
+      <div class="linear-border--slate p-3">
+        <div class="linear-border position-center-x -top-2 bg-gray-950/80">
+          <span class="font-sf text-xs text-blue-500">Referral link</span>
         </div>
+        <div class="break-words pr-10 text-xs text-blue-500">
+          0x790b44b9863599568a5b154e1a66de67f1bfd6d8f363ab03bb2b1e4e3350c313
+        </div>
+        <button class="absolute right-4 top-5 p-1" @click="copyLink">
+          <img class="w-4" src="@/assets/images/icons/copy.png" />
+        </button>
       </div>
-      <div class="pt-1 text-center text-[10px] text-slate-600">
-        Copy your referral link and share with friends to receive bonuses
-      </div>
+    </div>
+    <div class="pt-1 text-center text-[10px] text-slate-600">
+      Copy your referral link and share with friends to receive bonuses
     </div>
     <div class="py-4">
       <div class="flex px-5 text-xs text-zinc-300">
@@ -111,14 +123,17 @@ export default {
     tg.BackButton.hide();
   },
   methods: {
-    copyLink(){
-      const copyText = 'https://t.me/'
-      navigator.clipboard.writeText(copyText).then(function() {
-        alert("Ссылка скопирована: " + copyText);
-      }, function(err) {
-        console.error("Ошибка копирования ссылки: ", err);
-      });
-    }
+    copyLink() {
+      const copyText = "https://t.me/";
+      navigator.clipboard.writeText(copyText).then(
+        function () {
+          alert("Ссылка скопирована: " + copyText);
+        },
+        function (err) {
+          console.error("Ошибка копирования ссылки: ", err);
+        }
+      );
+    },
   },
 };
 </script>

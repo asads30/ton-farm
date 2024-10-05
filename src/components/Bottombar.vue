@@ -9,7 +9,7 @@
       </li>
       <li class="tabs__item">
         <router-link class="tabs__link" to="/referral">
-          <img src="@/assets/images/tabs/tabs-refferal.png" />
+          <img src="@/assets/images/tabs/tabs-referral.png" />
           <span>Refferal</span>
         </router-link>
       </li>
@@ -34,3 +34,4 @@
     </ul>
   </nav>
 </template>
+

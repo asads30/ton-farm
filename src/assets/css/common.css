@@ -1,6 +1,6 @@
 .border-radiant {
   --_space: 1px;
-  --_border-radius: 2rem 2rem 0 0;
+  --_border-radius: 25px 25px 0 0;
 
   margin-top: 1px;
   position: relative;
@@ -34,6 +34,10 @@
   top: var(--_space);
 }
 
+.main-gradient {
+  background: var(--main-gradient);
+}
+
 .modal {
   width: 100%;
   padding: 20px;
@@ -61,11 +65,20 @@
 
 .home-bg-main {
   position: absolute;
-  top: 55px;
+  top: -10px;
   left: 0;
-  height: 40rem;
+  height: 550px;
   width: 100%;
   z-index: -1;
+}
+
+.home-bg-main::before {
+  content: "";
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(180deg, #070b17 -0.1%, rgba(7, 11, 23, 0) 50%, #03050a 100%);
+  position: absolute;
+  left: 0;
 }
 
 .position-center {
@@ -100,7 +113,9 @@
   }
 }
 
+.disable,
 button:disabled {
+  pointer-events: none;
   opacity: 0.4;
 }
 
@@ -213,7 +228,7 @@ button:disabled {
 }
 
 .main-tab-button {
-  padding: 5px;
+  padding: 5px 2px;
   border-bottom-width: 1.5px;
   border-bottom-color: rgba(199, 89, 210, 0.4);
   border-bottom-style: dashed;
@@ -246,16 +261,64 @@ button:disabled {
   opacity: 0.6;
 }
 
+.main-radio  {
+  display: flex;
+  align-items: center;
+  padding: 5px;
+
+}
+
+.main-radio > input[type="radio"] {
+  display: none;
+}
+
+.main-radio > input:checked + span::before {
+  border: 2px solid #57c3f9;
+}
+
+.main-radio > input:checked + span::after {
+  background: #57c3f9;
+
+}
+
+.main-radio > span {
+  display: flex;
+  align-items: center;
+  position: relative;
+  flex: 1;
+}
+
+.main-radio > span::before {
+  content: "";
+  position: absolute;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  right: 0;
+  border: 2px solid #7d7d7d;
+}
+
+.main-radio > span::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  height: 12px;
+  width: 12px;
+  right: 4px;
+}
+
 [class^="linear-border"],
 [class*=" linear-border"] {
   --_space: 1px;
-  --_radius: 14px;
+  --_radius: 12px;
 
   z-index: 3;
 
   min-width: 25px;
   text-align: center;
-  padding: 1px 3px;
+  padding: 1px 8px;
+  margin: 1px 0;
+  line-height: normal;
   border-radius: var(--_radius);
 
   &::before,
@@ -332,16 +395,26 @@ button:disabled {
   background: #09445f;
 }
 
+.linear-border--rose::before {
+  background: var(--main-rose-gradient);
+}
+.linear-border--rose::after {
+  background: #1a1729;
+}
+
 [class^="main-action"],
 [class*=" main-action"] {
+  --_radius: 12px;
+
   display: flex;
   align-items: center;
 
   backdrop-filter: blur(7px);
   min-height: 40px;
-  border-radius: 10px;
+  border-radius: var(--_radius);
   padding: 10px;
   position: relative;
+  line-height: normal;
 
   z-index: 3;
 
@@ -349,7 +422,7 @@ button:disabled {
     content: "";
     bottom: 0;
     position: absolute;
-    border-radius: 10px;
+    border-radius: var(--_radius);
     background: #070b17;
     backdrop-filter: blur(7px);
 
@@ -362,7 +435,7 @@ button:disabled {
     content: "";
     bottom: -4px;
     position: absolute;
-    border-radius: 10px;
+    border-radius: var(--_radius);
     width: 100%;
     height: 100%;
     left: 0;
@@ -389,6 +462,13 @@ button:disabled {
 }
 .main-action--fuchsia::after {
   background: linear-gradient(180deg, rgba(199, 89, 121, 0) 0%, #c75979 100%);
+}
+
+.main-action--amber::before {
+  box-shadow: 0px 4px 10px 0px #00000036, 0px -3px 9px 0px #ffac0b8c inset;
+}
+.main-action--amber::after {
+  background: linear-gradient(180deg, rgba(255, 157, 11, 0) 0%, rgba(255, 187, 11, 0.7) 100%);
 }
 
 [class^="bg-shape"],

@@ -12,6 +12,8 @@ import WalletHistoryView from '@/views/WalletHistoryView.vue'
 import WalletView from '@/views/WalletView.vue'
 import WalletSendView from '@/views/WalletSendView.vue'
 import WorkShopView from '@/views/WorkShopView.vue'
+import BillHistoryView from '@/views/BillHistoryView.vue'
+import ChooseLanguageView from '@/views/ChooseLanguageView.vue'
 
 const routes = [
   {
@@ -29,6 +31,16 @@ const routes = [
     name: 'boost',
     component: BoostView,
     props: true
+  },
+  {
+    path: '/bill-history',
+    name: 'bill-history',
+    component: BillHistoryView
+  },
+  {
+    path: '/language',
+    name: 'language',
+    component: ChooseLanguageView
   },
   {
     path: '/farm',
