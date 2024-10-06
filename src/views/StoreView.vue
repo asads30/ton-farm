@@ -39,7 +39,11 @@
           <article class="relative px-3 pb-10 pt-6" v-for="asic in info?.asics" :key="asic?.id">
             <div class="grid grid-cols-2 gap-5">
               <div class="relative">
-                <h5 class="text-center font-patsy text-lg text-white">{{ asic?.name }}</h5>
+                <h5 class="text-center font-patsy text-lg text-white">
+                  {{ asic?.name }}
+                  <br />
+                  <span class="text-sm">{{ asic?.model }}</span>
+                </h5>
                 <div class="mx-auto h-28 w-28">
                   <img class="h-full w-full object-contain" :src="asic?.image" />
                 </div>
@@ -67,11 +71,12 @@
                   <div class="pl-3">
                     <p class="text-xs">Mining speed</p>
                     <p class="font-geist-mono font-semibold text-cyan-400">
-                      {{ formatEnergyPerHour(asic?.energy_per_hour) }} units/ <span class="-ml-2 text-xs">hour</span>
+                      {{ utils.formatEnergyPerHour(asic?.energy_per_hour) }} units/
+                      <span class="-ml-2 text-xs">hour</span>
                     </p>
                   </div>
                 </div>
-                <div class="main-action--green mt-4">
+                <div class="main-action--green mt-4" @click="showModalHandle(asic, 'asics')">
                   <div class="mx-auto flex items-center text-sm">
                     <p class="pr-2 text-xs text-white">Buy</p>
                     <p class="font-geist-mono font-semibold text-cyan-400">{{ asic?.cost }} TON</p>
@@ -86,7 +91,11 @@
       <!-- TAB 2 CONTENT -->
       <div :class="active === 2 ? 'block' : 'hidden'">
         <div class="inline-aside-lights">
-          <article class="relative px-3 pb-10 pt-6" v-for="lootbox in info?.loot_boxes" :key="lootbox.id">
+          <article
+            class="relative px-3 pb-10 pt-6"
+            v-for="lootbox in info?.loot_boxes"
+            :key="lootbox.id"
+          >
             <div class="grid grid-cols-2 gap-3">
               <div class="relative">
                 <h5 class="text-center font-patsy text-lg text-white">{{ lootbox?.name }}</h5>
@@ -102,10 +111,12 @@
                     <div class="font-geist-mono text-2xl font-semibold text-cyan-400">25%</div>
                   </div>
                 </div>
-                <div class="main-action--green mt-4">
+                <div class="main-action--green mt-4" @click="showModalHandle(lootbox, 'lootbox')">
                   <div class="mx-auto flex items-center text-sm">
                     <p class="pr-2 text-xs text-white">Buy</p>
-                    <p class="font-geist-mono font-semibold text-cyan-400">{{ lootbox?.cost }} TON</p>
+                    <p class="font-geist-mono font-semibold text-cyan-400">
+                      {{ lootbox?.cost }} TON
+                    </p>
                   </div>
                 </div>
               </div>
@@ -123,134 +134,6 @@
                 <h5 class="text-center font-patsy text-lg text-white">ProCore XT-500</h5>
                 <div class="mx-auto h-28 w-28">
                   <img class="h-full w-full object-contain" src="@/assets/images/stations/02.png" />
-                </div>
-                <div class="bg-shape-radial--fuchsia h-24 w-64 blur-3xl"></div>
-              </div>
-              <div class="grid content-center">
-                <div class="flex pb-2">
-                  <img
-                    class="h-8 w-8 flex-shrink-0 object-contain"
-                    src="@/assets/images/icons/power-consumption.png"
-                  />
-                  <div class="pl-3">
-                    <p class="text-xs">Total mined</p>
-                    <p class="font-geist-mono font-semibold text-cyan-400">
-                      0.1 <span class="text-xs">TON/h</span>
-                    </p>
-                  </div>
-                </div>
-                <div class="main-action--green mt-4">
-                  <div class="mx-auto flex items-center text-sm">
-                    <p class="pr-2 text-xs text-white">Buy</p>
-                    <p class="font-geist-mono font-semibold text-cyan-400">0.43 TON</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="slate-stander"></div>
-          </article>
-          <article class="relative px-3 pb-10 pt-6">
-            <div class="grid grid-cols-2 gap-5">
-              <div class="relative">
-                <h5 class="text-center font-patsy text-lg text-white">ProCore XT-500</h5>
-                <div class="mx-auto h-28 w-28">
-                  <img class="h-full w-full object-contain" src="@/assets/images/stations/06.png" />
-                </div>
-                <div class="bg-shape-radial--fuchsia h-24 w-64 blur-3xl"></div>
-              </div>
-              <div class="grid content-center">
-                <div class="flex pb-2">
-                  <img
-                    class="h-8 w-8 flex-shrink-0 object-contain"
-                    src="@/assets/images/icons/power-consumption.png"
-                  />
-                  <div class="pl-3">
-                    <p class="text-xs">Total mined</p>
-                    <p class="font-geist-mono font-semibold text-cyan-400">
-                      0.1 <span class="text-xs">TON/h</span>
-                    </p>
-                  </div>
-                </div>
-                <div class="main-action--green mt-4">
-                  <div class="mx-auto flex items-center text-sm">
-                    <p class="pr-2 text-xs text-white">Buy</p>
-                    <p class="font-geist-mono font-semibold text-cyan-400">0.43 TON</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="slate-stander"></div>
-          </article>
-          <article class="relative px-3 pb-10 pt-6">
-            <div class="grid grid-cols-2 gap-5">
-              <div class="relative">
-                <h5 class="text-center font-patsy text-lg text-white">ProCore XT-500</h5>
-                <div class="mx-auto h-28 w-28">
-                  <img class="h-full w-full object-contain" src="@/assets/images/stations/07.png" />
-                </div>
-                <div class="bg-shape-radial--fuchsia h-24 w-64 blur-3xl"></div>
-              </div>
-              <div class="grid content-center">
-                <div class="flex pb-2">
-                  <img
-                    class="h-8 w-8 flex-shrink-0 object-contain"
-                    src="@/assets/images/icons/power-consumption.png"
-                  />
-                  <div class="pl-3">
-                    <p class="text-xs">Total mined</p>
-                    <p class="font-geist-mono font-semibold text-cyan-400">
-                      0.1 <span class="text-xs">TON/h</span>
-                    </p>
-                  </div>
-                </div>
-                <div class="main-action--green mt-4">
-                  <div class="mx-auto flex items-center text-sm">
-                    <p class="pr-2 text-xs text-white">Buy</p>
-                    <p class="font-geist-mono font-semibold text-cyan-400">0.43 TON</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="slate-stander"></div>
-          </article>
-          <article class="relative px-3 pb-10 pt-6">
-            <div class="grid grid-cols-2 gap-5">
-              <div class="relative">
-                <h5 class="text-center font-patsy text-lg text-white">ProCore XT-500</h5>
-                <div class="mx-auto h-28 w-28">
-                  <img class="h-full w-full object-contain" src="@/assets/images/stations/07.png" />
-                </div>
-                <div class="bg-shape-radial--fuchsia h-24 w-64 blur-3xl"></div>
-              </div>
-              <div class="grid content-center">
-                <div class="flex pb-2">
-                  <img
-                    class="h-8 w-8 flex-shrink-0 object-contain"
-                    src="@/assets/images/icons/power-consumption.png"
-                  />
-                  <div class="pl-3">
-                    <p class="text-xs">Total mined</p>
-                    <p class="font-geist-mono font-semibold text-cyan-400">
-                      0.1 <span class="text-xs">TON/h</span>
-                    </p>
-                  </div>
-                </div>
-                <div class="main-action--green mt-4">
-                  <div class="mx-auto flex items-center text-sm">
-                    <p class="pr-2 text-xs text-white">Buy</p>
-                    <p class="font-geist-mono font-semibold text-cyan-400">0.43 TON</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="slate-stander"></div>
-          </article>
-          <article class="relative px-3 pb-10 pt-6">
-            <div class="grid grid-cols-2 gap-5">
-              <div class="relative">
-                <h5 class="text-center font-patsy text-lg text-white">ProCore XT-500</h5>
-                <div class="mx-auto h-28 w-28">
-                  <img class="h-full w-full object-contain" src="@/assets/images/stations/07.png" />
                 </div>
                 <div class="bg-shape-radial--fuchsia h-24 w-64 blur-3xl"></div>
               </div>
@@ -376,18 +259,24 @@
       </div>
     </div>
   </main>
+  <Modal :modalType="modalType" :show="showModal" :item="item" @close="closeModal" />
 </template>
 
 <script>
 import Modal from "@/components/Store/Modal.vue";
-import axios from 'axios'
+import utils from "@/utils";
+import axios from "axios";
 
 export default {
   name: "StoreView",
   data() {
     return {
+      utils,
       active: 1,
-      info: null
+      info: null,
+      showModal: false,
+      modalType: null,
+      item: null,
     };
   },
   components: {
@@ -418,9 +307,19 @@ export default {
     goActive(num) {
       this.active = num;
     },
-    formatEnergyPerHour(value) {
-      return Math.floor(value);
-    }
+    showModalHandle(item, type) {
+      this.modalType = type;
+      if (item.status === 3) {
+        return false;
+      } else {
+        this.showModal = true;
+        this.item = item;
+      }
+    },
+    closeModal() {
+      this.showModal = false;
+      this.item = null;
+    },
   },
 };
 </script>

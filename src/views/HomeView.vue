@@ -8,7 +8,7 @@
           </div>
           <div class="pl-2">
             <p class="text-sm text-white">{{ info?.account?.first_name }}</p>
-            <p class="font-patsy text-amber-400">Level {{ info?.account?.level }}</p>
+            <p class="font-patsy text-amber-400">{{ $t('level') }} {{ info?.account?.level }}</p>
           </div>
           <div class="ml-auto mr-10">
             <div class="flex items-center font-geist-mono text-blue-400">

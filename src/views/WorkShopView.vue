@@ -8,7 +8,7 @@
         <h5 class="-mb-4 text-center font-patsy text-lg">
           <span class="text-white">Level 1</span> /5
         </h5>
-        <div class="max-w-40">
+        <div class="max-w-40 mt-2">
           <img class="w-full" src="@/assets/images/sections/workshop-2.png" />
         </div>
         <div class="bg-shape-radial--fuchsia h-28 w-80 blur-3xl"></div>
