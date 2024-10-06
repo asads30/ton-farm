@@ -45,3 +45,7 @@ body {
     overflow: auto;
   }
 }
+
+.share-btn{
+  height: 40px;
+}

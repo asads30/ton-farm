@@ -1,15 +1,9 @@
 <template>
   <main>
     <div class="pb-2 text-center px-1">
-      <h2 class="font-patsy text-3xl text-white">Invite friends</h2>
+      <h2 class="font-patsy text-3xl text-white mb-2">Invite friends</h2>
       <div class="flex items-center text-xs font-light">
         <p class="text-zinc-300">You and your friends will receive bonuses</p>
-        <button class="linear-border--slate relative ml-auto">
-          <div class="flex items-center gap-1 p-1">
-            <img class="w-5" src="@/assets/images/icons/share.png" />
-            <span class="text-white">Share</span>
-          </div>
-        </button>
       </div>
     </div>
     <div class="profile-card">
@@ -28,19 +22,13 @@
       </div>
     </div>
     <div class="linear-border--slate relative p-3 my-2">
-      <div class="flex items-center">
-        <p class="mr-auto font-light text-zinc-300 text-sm">Your referral level</p>
-        <p class="font-geist-mono text-xl">2</p>
-      </div>
-      <div class="h-[1px] w-full bg-slate-800 my-2"></div>
       <div class="flex items-center text-left">
         <p class="mr-auto font-light text-zinc-300 text-sm">
           You receive of each referral’s total income.
         </p>
         <p class="font-geist-mono text-lg">5%</p>
       </div>
-    </div>
-    <div class="linear-border--slate relative p-3 my-2">
+      <div class="h-[1px] w-full bg-slate-800 my-2"></div>
       <div class="flex items-center text-left">
         <p class="mr-auto font-light text-zinc-300">Total referrals</p>
         <p class="font-geist-mono text-lg">17</p>
@@ -62,6 +50,12 @@
     <div class="pt-1 text-center text-[10px] text-slate-600">
       Copy your referral link and share with friends to receive bonuses
     </div>
+    <button class="linear-border--slate relative ml-auto mt-2 w-100 share-btn">
+      <div class="flex items-center gap-1 p-1 justify-center">
+        <img class="w-5" src="@/assets/images/icons/share.png" />
+        <span class="text-white">Share</span>
+      </div>
+    </button>
     <div class="py-4">
       <div class="flex px-5 text-xs text-zinc-300">
         <p>Name</p>
