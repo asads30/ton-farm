@@ -17,7 +17,9 @@
               class="h-8 w-8 flex-shrink-0 object-contain"
               src="@/assets/images/icons/ton-hour-slate.png"
             />
-            <div class="mr-auto pl-3 text-xs">Mining speed</div>
+            <div class="mr-auto pl-3 text-xs">
+              {{ $t("mining-speed") }}
+            </div>
             <div class="font-geist-mono text-sm font-bold text-cyan-400">0.1 TON/h</div>
           </div>
           <div class="main-blue-gradient"></div>
@@ -26,8 +28,12 @@
               class="h-8 w-8 flex-shrink-0 object-contain"
               src="@/assets/images/icons/lightning.png"
             />
-            <div class="mr-auto pl-3 text-xs">Mining speed</div>
-            <div class="font-geist-mono text-sm font-bold text-cyan-400">5 units/h</div>
+            <div class="mr-auto pl-3 text-xs">
+              {{ $t("power-consumption") }}
+            </div>
+            <div class="font-geist-mono text-sm font-bold text-cyan-400">
+              5 {{ $t("units-hour") }}
+            </div>
           </div>
         </div>
       </div>
@@ -43,13 +49,16 @@
       <div class="pt-3">
         <div class="main-action--green">
           <div class="mx-auto flex items-center py-1 text-sm">
-            <p class="pr-2 text-white">Boost repair for</p>
+            <p class="pr-2 text-white">
+              {{ $t("boost-repair-for") }}
+            </p>
             <p class="font-geist-mono font-semibold text-cyan-400">0.43 TON</p>
           </div>
         </div>
       </div>
     </div>
   </section>
+  <div :class="show && 'overlay'"></div>
 </template>
 
 <script>

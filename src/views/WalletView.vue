@@ -1,15 +1,17 @@
 <template>
   <main>
     <div class="pb-4 text-center">
-      <h2 class="font-patsy text-3xl text-white">Wallet</h2>
+      <h2 class="font-patsy text-3xl text-white">
+        {{ $t("wallet") }}
+      </h2>
     </div>
     <div class="profile-card">
       <div class="main-circle-gradient h-11 w-11 p-1">
         <img class="rounded-[50%]" src="@/assets/images/avatars/01.png" />
       </div>
-      <div class="pl-2">
+      <div class="pl-2 text-sm">
         <p class="text-sm text-white">Nick Jay</p>
-        <p class="font-patsy text-amber-400">Level 8</p>
+        <p class="font-patsy text-amber-400">{{ $t("level") }} 8</p>
       </div>
       <div class="ml-auto mr-10">
         <div class="flex items-center font-geist-mono text-blue-400">
@@ -22,20 +24,29 @@
       <button class="menu-item p-3">
         <div class="flex items-center">
           <img class="mr-3 w-7" src="@/assets/images/icons/wallet.png" />
-          <p class="text-sm text-white">Connect wallet</p>
+          <p class="text-sm text-white">
+            {{ $t("connect-wallet") }}
+          </p>
         </div>
       </button>
       <div class="linear-border--slate relative p-3">
         <div class="mb-3 flex items-center">
           <img class="mr-3 w-7" src="@/assets/images/icons/wallet.png" />
-          <p class="mr-auto text-sm text-white">TON wallet</p>
-          <p class="text-xs font-medium text-green-400">Connected</p>
+          <p class="mr-auto text-sm text-white">
+            TON
+            <span class="lowercase text-xs">
+              {{ $t("wallet") }}
+            </span>
+          </p>
+          <p class="text-xs font-medium text-green-400">
+            {{ $t("connected") }}
+          </p>
         </div>
 
         <button class="menu-item rounded-xl bg-cyan-400/20 p-2">
           <div class="flex items-center px-3">
             <p class="mr-auto text-xs text-white">EQDo...IetE</p>
-            <p class="p-1 text-xs text-white">Copy</p>
+            <p class="p-1 text-xs text-white">{{ $t("copy") }}</p>
           </div>
         </button>
 
@@ -43,16 +54,17 @@
 
         <button class="menu-item rounded-xl p-2">
           <div class="flex justify-center">
-            <p class="text-xs text-white">Unlink</p>
+            <p class="text-xs text-white">{{ $t("unlink") }}</p>
           </div>
         </button>
       </div>
 
       <div class="py-5">
+        <div class="text-sm font-light text-center">{{ $t("add-ton-crypto-transfer") }}</div>
         <div class="relative mt-5 pt-2">
           <div class="linear-border--slate p-3">
-            <div class="linear-border position-center-x -top-2 bg-gray-950/80">
-              <span class="font-sf text-xs text-blue-500">Your wallet address</span>
+            <div class="linear-border position-center-x -top-2 bg-gray-950">
+              <span class="font-sf text-xs text-blue-500">{{ $t("wallet-address") }}</span>
             </div>
             <div class="relative break-words pb-8">
               <div class="pr-10 text-xs text-blue-500 absolute w-11/12">
@@ -64,34 +76,37 @@
             </button>
             <div class="h-[1px] w-full bg-slate-800 my-2"></div>
             <div class="flex items-center text-blue-500 text-sm">
-              <p>Network:</p>
+              <p>{{ $t("network") }}:</p>
               <p class="ml-auto">TON</p>
             </div>
           </div>
         </div>
-        <div class="text-center text-white/80 text-xs">
-          Copy your wallet address and use it as the destination address to which you can senf the
-          funds.
+        <div class="text-center text-white/80 text-xs font-light p-1">
+          {{ $t("copy-wallet-address") }}
         </div>
       </div>
-      <router-link to="/wallet/send" class="menu-item p-3">
+      <router-link to="/wallet/add" class="menu-item p-3">
         <div class="flex items-center">
           <img class="mr-3 w-7" src="@/assets/images/icons/plus-circle.png" />
-          <p class="mr-auto text-sm text-white">Add TON</p>
+          <p class="mr-auto text-sm text-white">{{ $t("add-ton") }}</p>
           <img class="mr-2 w-2" src="@/assets/images/icons/chevron-right.png" />
         </div>
       </router-link>
       <router-link to="/wallet/send" class="menu-item p-3">
         <div class="flex items-center">
           <img class="mr-3 w-7" src="@/assets/images/icons/arrow-up-circle.png" />
-          <p class="mr-auto text-sm text-white">Send TON</p>
+          <p class="mr-auto text-sm text-white">
+            {{ $t("send-ton") }}
+          </p>
           <img class="mr-2 w-2" src="@/assets/images/icons/chevron-right.png" />
         </div>
       </router-link>
       <router-link to="/wallet/history" class="menu-item p-3">
         <div class="flex items-center">
           <img class="mr-3 w-7" src="@/assets/images/icons/transactions.png" />
-          <p class="mr-auto text-sm text-white">Transaction history</p>
+          <p class="mr-auto text-sm text-white">
+            {{ $t("transaction-history") }}
+          </p>
           <img class="mr-2 w-2" src="@/assets/images/icons/chevron-right.png" />
         </div>
       </router-link>

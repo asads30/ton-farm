@@ -1,37 +1,38 @@
 <template>
-  <nav class="tabs border-radiant">
+  <nav class="tabs border-radiant font-sf">
     <ul class="tabs__list">
       <li class="tabs__item">
         <router-link class="tabs__link" to="/">
           <img src="@/assets/images/tabs/tabs-home.png" />
-          <span>Home</span>
+          <span>{{ $t("home") }}</span>
         </router-link>
       </li>
       <li class="tabs__item">
         <router-link class="tabs__link" to="/referral">
           <img src="@/assets/images/tabs/tabs-referral.png" />
-          <span>Refferal</span>
+          <span>
+            {{ $t("refferal") }}
+          </span>
         </router-link>
       </li>
       <li class="tabs__item">
         <router-link class="tabs__link" to="/boost">
           <img src="@/assets/images/tabs/tabs-boost.png" />
-          <span>Boost</span>
+          <span>{{ $t("boost-tab") }}</span>
         </router-link>
       </li>
       <li class="tabs__item">
         <router-link class="tabs__link" to="/wallet">
           <img src="@/assets/images/tabs/tabs-wallet.png" />
-          <span>Wallet</span>
+          <span>{{ $t("wallet") }}</span>
         </router-link>
       </li>
       <li class="tabs__item">
         <router-link class="tabs__link" to="/info">
           <img src="@/assets/images/tabs/tabs-info.png" />
-          <span>Info</span>
+          <span>{{ $t("info") }}</span>
         </router-link>
       </li>
     </ul>
   </nav>
 </template>
-

@@ -14,6 +14,7 @@ import WalletSendView from '@/views/WalletSendView.vue'
 import WorkShopView from '@/views/WorkShopView.vue'
 import BillHistoryView from '@/views/BillHistoryView.vue'
 import ChooseLanguageView from '@/views/ChooseLanguageView.vue'
+import WalletAddView from '@/views/WalletAddView.vue'
 
 const routes = [
   {
@@ -86,6 +87,11 @@ const routes = [
     path: '/wallet/history',
     name: 'wallet-history',
     component: WalletHistoryView
+  },
+  {
+    path: '/wallet/add',
+    name: 'wallet-add',
+    component: WalletAddView
   },
   {
     path: '/wallet/send',

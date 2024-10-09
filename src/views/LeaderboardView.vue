@@ -1,7 +1,9 @@
 <template>
   <main>
     <div class="pb-4 text-center">
-      <h2 class="font-patsy text-3xl text-white">Leaderboard</h2>
+      <h2 class="font-patsy text-3xl text-white">
+        {{ $t("leaderboard") }}
+      </h2>
     </div>
     <div class="grid gap-2">
       <article class="relative p-2">
@@ -17,15 +19,17 @@
           </div>
           <div class="pl-2">
             <div class="flex text-[10px] text-slate-600">
-              <span class="ml-auto py-1">Income</span>
+              <span class="ml-auto py-1">{{ $t("income") }}</span>
             </div>
             <div class="flex items-center text-white">
-              <p class="font-geist-mono text-xs font-medium">1555.54 TON/h</p>
+              <p class="font-geist-mono text-xs font-medium">1555.54 {{$t("ton-hour")}}</p>
             </div>
           </div>
           <div class="ml-auto">
             <div class="flex text-[10px] text-slate-600">
-              <span class="ml-auto py-1">Total mined</span>
+              <span class="ml-auto py-1">
+                {{ $t('total-mined') }}
+              </span>
             </div>
             <div class="flex items-center text-white">
               <img class="mr-1 h-4 w-4" src="@/assets/images/icons/ton.png" />
@@ -47,15 +51,15 @@
           </div>
           <div class="pl-2">
             <div class="flex text-[10px] text-slate-600">
-              <span class="ml-auto py-1">Income</span>
+              <span class="ml-auto py-1">{{ $t("income") }}</span>
             </div>
             <div class="flex items-center text-white">
-              <p class="font-geist-mono text-xs font-medium">1555.54 TON/h</p>
+              <p class="font-geist-mono text-xs font-medium">1555.54 {{$t("ton-hour")}}</p>
             </div>
           </div>
           <div class="ml-auto">
             <div class="flex text-[10px] text-slate-600">
-              <span class="ml-auto py-1">Total mined</span>
+              <span class="ml-auto py-1"> {{ $t('total-mined') }}</span>
             </div>
             <div class="flex items-center text-white">
               <img class="mr-1 h-4 w-4" src="@/assets/images/icons/ton.png" />
@@ -77,15 +81,15 @@
           </div>
           <div class="pl-2">
             <div class="flex text-[10px] text-slate-600">
-              <span class="ml-auto py-1">Income</span>
+              <span class="ml-auto py-1">{{ $t("income") }}</span>
             </div>
             <div class="flex items-center text-white">
-              <p class="font-geist-mono text-xs font-medium">1555.54 TON/h</p>
+              <p class="font-geist-mono text-xs font-medium">1555.54 {{$t("ton-hour")}}</p>
             </div>
           </div>
           <div class="ml-auto">
             <div class="flex text-[10px] text-slate-600">
-              <span class="ml-auto py-1">Total mined</span>
+              <span class="ml-auto py-1">{{ $t('total-mined') }}</span>
             </div>
             <div class="flex items-center text-white">
               <img class="mr-1 h-4 w-4" src="@/assets/images/icons/ton.png" />
@@ -107,15 +111,15 @@
           </div>
           <div class="pl-2">
             <div class="flex text-[10px] text-slate-600">
-              <span class="ml-auto py-1">Income</span>
+              <span class="ml-auto py-1">{{ $t("income") }}</span>
             </div>
             <div class="flex items-center text-white">
-              <p class="font-geist-mono text-xs font-medium">1555.54 TON/h</p>
+              <p class="font-geist-mono text-xs font-medium">1555.54 {{$t("ton-hour")}}</p>
             </div>
           </div>
           <div class="ml-auto">
             <div class="flex text-[10px] text-slate-600">
-              <span class="ml-auto py-1">Total mined</span>
+              <span class="ml-auto py-1">{{ $t('total-mined') }}</span>
             </div>
             <div class="flex items-center text-white">
               <img class="mr-1 h-4 w-4" src="@/assets/images/icons/ton.png" />
@@ -125,8 +129,8 @@
         </div>
       </article>
       <div class="position-center-x bottom-2 top-auto w-full px-1">
-        <article class="linear-border--slate relative my-2 p-2">
-          <div class="flex items-center rounded-xl bg-slate-950/50 p-3">
+        <article class="linear-border--slate relative my-2 p-1">
+          <div class="flex items-center rounded-xl bg-slate-950/50 p-2">
             <div class="flex w-1/3 items-center">
               <div class="main-circle-gradient h-11 w-11 flex-shrink-0 p-[2px]">
                 <img class="rounded-[50%]" src="@/assets/images/avatars/03.png" />
@@ -138,15 +142,15 @@
             </div>
             <div class="pl-2">
               <div class="flex text-[10px] text-slate-600">
-                <span class="ml-auto py-1">Income</span>
+                <span class="ml-auto py-1">{{ $t("income") }}</span>
               </div>
               <div class="flex items-center text-white">
-                <p class="font-geist-mono text-xs font-medium">1555.54 TON/h</p>
+                <p class="font-geist-mono text-xs font-medium">1555.54 {{$t("ton-hour")}}</p>
               </div>
             </div>
             <div class="ml-auto">
               <div class="flex text-[10px] text-slate-600">
-                <span class="ml-auto py-1">Total mined</span>
+                <span class="ml-auto py-1">{{ $t('total-mined') }}</span>
               </div>
               <div class="flex items-center text-white">
                 <img class="mr-1 h-4 w-4" src="@/assets/images/icons/ton.png" />
@@ -155,7 +159,7 @@
             </div>
           </div>
           <div class="linear-border--cyan absolute left-4 top-1 px-4 py-1">
-            <span class="font-sf text-[10px] block text-white">You</span>
+            <span class="font-sf text-[10px] block text-white">{{ $t('you') }}</span>
           </div>
         </article>
       </div>

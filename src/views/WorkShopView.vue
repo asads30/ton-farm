@@ -1,12 +1,15 @@
 <template>
   <main>
     <div class="pb-4 text-center">
-      <h2 class="font-patsy text-3xl text-white">Workshop</h2>
+      <h2 class="font-patsy text-3xl text-white">
+        {{ $t("workshop") }}
+      </h2>
     </div>
     <div class="grid grid-cols-2 gap-5 py-6">
       <div class="relative">
         <h5 class="-mb-4 text-center font-patsy text-lg">
-          <span class="text-white">Level 1</span> /5
+          <span class="text-white">
+            {{ $t("level") }} 1</span> /5
         </h5>
         <div class="max-w-40 mt-2">
           <img class="w-full" src="@/assets/images/sections/workshop-2.png" />
@@ -20,7 +23,9 @@
             src="@/assets/images/icons/empty-hexagon.png"
           />
           <div class="pl-3">
-            <p class="text-xs">Slots available</p>
+            <p class="text-xs">
+              {{ $t("slots-available") }}
+            </p>
             <p class="font-geist-mono text-sm font-semibold text-cyan-400">1</p>
           </div>
         </div>
@@ -31,7 +36,9 @@
             src="@/assets/images/icons/filled-hexagon.png"
           />
           <div class="pl-3">
-            <p class="text-xs">Slots used</p>
+            <p class="text-xs">
+              {{ $t("slots-used") }}
+            </p>
             <p class="font-geist-mono text-sm font-semibold text-cyan-400">1</p>
           </div>
         </div>
@@ -40,7 +47,9 @@
 
     <div class="main-action--green m-2">
       <div class="mx-auto flex items-center text-sm">
-        <p class="pr-2 text-white">Boost</p>
+        <p class="pr-2 text-white">
+          {{ $t("boost") }}
+        </p>
       </div>
     </div>
 
@@ -65,7 +74,9 @@
         <template v-if="item.status === 3">
           <div class="position-center">
             <img class="mx-auto mb-1 block w-8" src="@/assets/images/icons/lock-yellow.png" />
-            <p class="font-patsy text-sm text-rose-400">Locked</p>
+            <p class="font-patsy text-xs text-rose-400">
+              {{ $t("locked") }}
+            </p>
           </div>
           <img class="figure-shape--bg" src="@/assets/images/shapes/red-hexagon-locked.png" />
         </template>
