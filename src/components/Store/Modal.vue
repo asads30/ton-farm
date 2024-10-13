@@ -4,7 +4,7 @@
       <img class="w-6" src="@/assets/images/icons/close.png" />
     </button>
     <div class="py-4">
-      <template v-if="modalType === 'asics'">
+      <template v-if="modalType === 'asic'">
         <div class="pb-1 text-center">
           <h4 class="font-patsy text-lg text-white">
             {{ item?.name }}
@@ -45,12 +45,12 @@
           </div>
         </div>
         <div class="pt-3">
-          <div class="main-action--green">
+          <button @click="buyItem(modalType, item?.level)" class="main-action--green">
             <div class="mx-auto flex items-center py-1 text-sm">
               <p class="pr-2 text-white">{{ $t("buy") }}</p>
               <p class="font-geist-mono font-semibold text-cyan-400">{{ item?.cost }} TON</p>
             </div>
-          </div>
+          </button>
         </div>
       </template>
       <template v-if="modalType === 'lootbox'">
@@ -95,12 +95,12 @@
           </div>
         </div>
         <div class="pt-6">
-          <div class="main-action--green">
+          <button @click="buyItem(item?.type, item?.level)" class="main-action--green">
             <div class="mx-auto flex items-center py-1 text-sm">
               <p class="pr-2 text-white">{{ $t("buy") }}</p>
               <p class="font-geist-mono font-semibold text-cyan-400">{{ item?.cost }} TON</p>
             </div>
-          </div>
+          </button>
         </div>
       </template>
     </div>
@@ -110,23 +110,68 @@
 
 <script>
 import utils from "@/utils";
+import axios from 'axios'
+import { mapGetters } from "vuex";
+import { useToast } from 'vue-toastification'
 
 export default {
   name: "StoreModal",
   data() {
     return {
       utils,
+      toast: useToast()
     };
+  },
+  computed: {
+    ...mapGetters([
+      "getInitData"
+    ])
   },
   props: {
     show: Boolean,
     item: Object,
-    modalType: "asics" | "lootbox" | "other" | "inventory",
+    modalType: "asic" | "lootbox" | "other" | "inventory",
   },
   methods: {
     closeModal() {
       this.$emit("close");
     },
+    buyItem(type, level){
+      const data = {
+        initData: this.getInitData ? this.getInitData : "user=%7B%22id%22%3A5850887936%2C%22first_name%22%3A%22Asadbek%22%2C%22last_name%22%3A%22Ibragimov%22%2C%22username%22%3A%22webmonster_uz%22%2C%22language_code%22%3A%22ru%22%2C%22allows_write_to_pm%22%3Atrue%7D&chat_instance=-1442677966141426206&chat_type=group&auth_date=1727613930&hash=08188303ad38ea8c0213a6df5da80738a9395e33ff55438820988a30274542f4",
+        t: "shop",
+        a: "buy",
+        item: type,
+        level: level
+      }
+      axios.post('https://tonminefarm.com/request', data).then(res => {
+        if(res.data.status === 200){
+          this.$emit("close");
+          this.toast.success('Успешно куплено!');
+          this.getShopData()
+        } else{
+          this.toast.error(res.data.status_text)
+        }
+      })
+    },
+    getShopData(){
+      let data = {
+        initData: this.getInitData ? this.getInitData : "user=%7B%22id%22%3A5850887936%2C%22first_name%22%3A%22Asadbek%22%2C%22last_name%22%3A%22Ibragimov%22%2C%22username%22%3A%22webmonster_uz%22%2C%22language_code%22%3A%22ru%22%2C%22allows_write_to_pm%22%3Atrue%7D&chat_instance=-1442677966141426206&chat_type=group&auth_date=1727613930&hash=08188303ad38ea8c0213a6df5da80738a9395e33ff55438820988a30274542f4",
+        t: "shop",
+        a: "get",
+      };
+      axios.post("https://tonminefarm.com/request", data).then((res) => {
+        if (res.data.status === 200) {
+          this.$store.commit('setShop', res?.data?.data)
+        }
+      });
+    }
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.main-action--green{
+  width: 100%;
+}
+</style>

@@ -96,5 +96,8 @@
   "english": "Английский",
   "russian": "Русский",
   "ok": "Ок",
-  "choose-language": "Выберите язык"
+  "choose-language": "Выберите язык",
+  "power_station": {
+    "income_power": "Мощность дохода"
+  }
 }

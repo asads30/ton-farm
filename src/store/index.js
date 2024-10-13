@@ -3,7 +3,10 @@ import { createStore } from 'vuex'
 export default createStore({
   state: {
     user: null,
-    initData: null
+    initData: null,
+    shop: null,
+    home: null,
+    powerStation: null
   },
   getters: {
     getUser(state){
@@ -11,6 +14,15 @@ export default createStore({
     },
     getInitData(state){
       return state.initData
+    },
+    getShop(state){
+      return state.shop
+    },
+    getHome(state){
+      return state.home
+    },
+    getPowerStation(state){
+      return state.powerStation
     }
   },
   mutations: {
@@ -19,6 +31,15 @@ export default createStore({
     },
     setInitData(state, initData){
       state.initData = initData
+    },
+    setShop(state, shop){
+      state.shop = shop
+    },
+    setHome(state, home){
+      state.home = home
+    },
+    setPowerStation(state, powerStation){
+      state.powerStation = powerStation
     }
   }
 })

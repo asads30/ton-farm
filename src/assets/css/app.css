@@ -49,3 +49,7 @@ body {
 .share-btn {
   height: 40px;
 }
+
+.main-action--green{
+  width: 100%;
+}
