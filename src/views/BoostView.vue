@@ -187,7 +187,7 @@
             <p class="text-lg">{{ getPowerStation?.level?.level }}</p>
           </div>
           <div :class="getPowerStation?.level?.level == 12 ? 'grid min-w-32 flex-1 disable' : 'grid min-w-32 flex-1'">
-            <button class="main-action--green" @click="showModalHandle('level')">
+            <button class="main-action--green" @click="showModalHandle(1)">
               <div class="mx-auto flex items-center text-xs">
                 <p class="pr-2 text-white">{{ $t("level-up") }}</p>
                 <p class="font-geist-mono font-semibold text-cyan-400">{{ getPowerStation?.next_level?.cost }} TON</p>
@@ -201,7 +201,7 @@
             <p class="text-lg">{{ getPowerStation?.grade?.level }}</p>
           </div>
           <div :class="getPowerStation?.max_level?.level == getPowerStation?.level?.level ? 'ml-auto grid min-w-32 flex-1' : 'ml-auto grid min-w-32 flex-1 disable'">
-            <button class="main-action--green mb-1" @click="showModalHandle('grade')">
+            <button class="main-action--green mb-1" @click="showModalHandle(2)">
               <div class="mx-auto flex items-center text-xs">
                 <p class="pr-2 text-white">{{ $t("level-up") }}</p>
                 <p class="font-geist-mono font-semibold text-cyan-400">{{ getPowerStation?.next_grade?.cost }} TON</p>
@@ -311,14 +311,15 @@
     </div>
   </main>
   <Bottombar />
-  <Modal :show="showModal" :item="item" @close="closeModal" />
+  <Modal :show="showModal" :item="item" :variant="variant" @close="closeModal" />
 </template>
 
 <script>
+import axios from 'axios';
 import Bottombar from "@/components/Bottombar.vue";
 import Modal from "@/components/Boost/Modal.vue";
 import { mapGetters } from "vuex";
-import { useToast } from 'vue-toastification'
+import { useToast } from 'vue-toastification';
 
 export default {
   name: "BoostView",
@@ -327,7 +328,8 @@ export default {
       active: 3,
       showModal: false,
       item: null,
-      toast: useToast()
+      toast: useToast(),
+      variant: 0
     };
   },
   computed: {
@@ -347,19 +349,20 @@ export default {
       this.active = 2;
     }
     if(!this.getPowerStation){
-      getPowerStationData()
+      this.getPowerStationData()
     }
   },
   methods: {
     goActive(num) {
       this.active = num;
     },
-    showModalHandle() {
+    showModalHandle(variant) {
       if(!this.getPowerStation.level.level == this.getPowerStation.max_level.level){
         this.toast.error('Это максимальный уровень повысьте грейд!')
       } else{
         this.showModal = true;
         this.item = this.getPowerStation;
+        this.variant = variant
       }
     },
     closeModal() {

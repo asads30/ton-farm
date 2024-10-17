@@ -10,6 +10,7 @@
       <div class="mx-auto max-w-36 pb-4">
         <img src="@/assets/images/stations/01.png" />
       </div>
+      <div class="asic-id">#17</div>
       <div class="rounded-lg border border-dashed border-cyan-400/65">
         <div class="grid content-center p-3">
           <div class="flex items-center pb-3">
@@ -68,3 +69,15 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+  .asic-id{
+    font-size: 20px;
+    font-weight: 700;
+    color: rgb(34 211 238);
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 5px;
+    margin-right: 10px;
+  }
+</style>

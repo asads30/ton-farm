@@ -46,63 +46,34 @@
               </div>
             </div>
           </div>
-          <div class="grid grid-cols-2 gap-x-2 gap-y-9 py-2 relative p-1">
-            <router-link to="/store">
-              <div class="main-action--cyan text-sm mx-1">
-                <div class="text-blue-400">
-                  <span class="text-xs">{{ $t("level") }}</span>
-                  {{ info?.shop[0]?.level }}
-                </div>
-              </div>
-              <div class="flex justify-center self-end home-station">
-                <img class="h-44 translate-x-1" src="@/assets/images/main1.png" />
+          <div class="home-box">
+            <router-link to="/store" class="home-item">
+              <img src="@/assets/images/main1.png" alt="">
+            </router-link>
+            <router-link to="/power-station" class="home-item">
+              <img src="@/assets/images/main2.png" alt="">
+              <div class="home-item-info">
+                <div class="home-item-label">{{ $t("level") }} {{ info?.powerstation?.level }}</div>
+                <div class="home-item-label">{{ $t("grade") }} {{ info?.powerstation?.grade }}</div>
               </div>
             </router-link>
-            <router-link to="/power-station">
-              <div class="main-action--cyan text-sm mx-1">
-                <div class="text-sm text-blue-400">
-                  <span class="text-xs">{{ $t("level") }}</span>
-                  {{ info?.powerstation?.level }}
-                </div>
-                <div class="ml-auto flex items-center">
-                  <p class="pr-1 font-geist-mono text-blue-400">
-                    <span class="text-xs">{{ $t("grade") }}</span>
-                    {{ info?.powerstation?.grade }}
-                  </p>
-                </div>
-              </div>
-              <div class="flex justify-center self-end">
-                <img class="h-44 -translate-x-1" src="@/assets/images/main2.png" />
+            <div class="home-center">
+              <img src="@/assets/images/main3.png" alt="">
+            </div>
+            <router-link to="/" class="home-item">
+              <img src="@/assets/images/main4.png" alt="">
+              <div class="home-item-info home-item-info2">
+                <div class="home-item-label">{{ $t("level") }} {{ info?.farm?.level }}</div>
+                <div class="home-item-label">{{ $t("grade") }} {{ info?.farm?.grade?.level }}</div>
               </div>
             </router-link>
-            <router-link to="/farm">
-              <div :class="info?.farm?.working == 1 ? 'main-action--amber text-sm mx-1' : 'main-action--amber text-sm mx-1 not'">
-                <div :class="info?.farm?.working == 1 ? 'text-sm text-blue-400' : 'text-sm text-amber-300'">Level {{ info?.farm?.level }}</div>
-                <div class="ml-auto flex items-center">
-                  <p :class="info?.farm?.working == 1 ? 'pr-1 font-geist-mono text-blue-400' : 'pr-1 font-geist-mono text-amber-300'">Grade {{ info?.farm?.grade?.level }}</p>
-                </div>
+            <div class="home-item">
+              <img src="@/assets/images/main5.png" alt="">
+              <div class="home-item-info">
+                <div class="home-item-label">{{ $t("level") }} {{ info?.workshop?.level }}</div>
+                <div class="home-item-label">{{ $t("grade") }} {{ info?.workshop?.grade }}</div>
               </div>
-              <div class="flex justify-center self-center">
-                <img class="h-48" src="@/assets/images/main3.png" />
-              </div>
-            </router-link>
-            <router-link to="/workshop">
-              <div class="main-action--cyan text-sm mx-1">
-                <div class="text-sm text-blue-400">
-                  <span class="text-xs">{{ $t("level") }}</span>
-                  {{ info?.workshop?.level }}
-                </div>
-                <div class="ml-auto flex items-center">
-                  <p class="pr-1 font-geist-mono text-blue-400">
-                    <span class="text-xs">{{ $t("grade") }}</span>
-                    {{ info?.workshop?.grade }}
-                  </p>
-                </div>
-              </div>
-              <div class="flex justify-center self-center">
-                <img class="h-48" src="@/assets/images/main4.png" />
-              </div>
-            </router-link>
+            </div>
           </div>
           <div class="flex-1"></div>
         </div>
@@ -174,5 +145,51 @@ export default {
   min-height: 100vh;
   max-height: 200vh;
   overflow-y: scroll;
+  &-box{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+  }
+  &-item{
+    width: 157px;
+    height: 178px;
+    position: relative;
+    img{
+      height: 100%;
+    }
+    &-info{
+      background: rgba(0, 0, 0, 0.6);
+      height: 46px;
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      border: 1px solid rgba(11, 197, 255, 0.5);
+      border-radius: 10px;
+      padding: 4px 8px;
+      text-align: center;
+      backdrop-filter: blur(7px)
+    }
+    &-info2{
+      left: 0;
+      right: auto;
+    }
+    &-label{
+      color: rgba(85, 192, 253, 1);
+      font-size: 14px;
+      line-height: 18px;
+    }
+  }
+  &-center{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    img{
+      width: 130px;
+      height: 144px;
+      filter: grayscale(1);
+    }
+  }
 }
 </style>
