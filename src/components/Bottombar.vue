@@ -11,7 +11,7 @@
         <router-link class="tabs__link" to="/referral">
           <img src="@/assets/images/tabs/tabs-referral.png" />
           <span>
-            {{ $t("refferal") }}
+            {{ $t("refferal.title") }}
           </span>
         </router-link>
       </li>

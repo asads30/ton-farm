@@ -5,12 +5,12 @@
     </button>
     <div class="py-4 overflow-y-auto">
       <div class="pb-1 text-center">
-        <h4 class="font-patsy text-lg text-white">{{ item.title }}</h4>
+        <h4 class="font-patsy text-lg text-white">{{ item?.asic?.info?.model }}</h4>
       </div>
       <div class="mx-auto max-w-36 pb-4">
-        <img src="@/assets/images/stations/01.png" />
+        <img :src="item?.asic?.info?.image" />
       </div>
-      <div class="asic-id">#17</div>
+      <div class="asic-id">#{{ item?.asic?.asic_number }}</div>
       <div class="rounded-lg border border-dashed border-cyan-400/65">
         <div class="grid content-center p-3">
           <div class="flex items-center pb-3">
@@ -22,7 +22,7 @@
               {{ $t("mining-speed") }}
             </div>
             <div class="font-geist-mono text-sm font-bold text-cyan-400">
-              0.1 {{ $t("ton-hour") }}
+              {{ item?.asic?.info?.ton_per_hour }} {{ $t("ton-hour") }}
             </div>
           </div>
           <div class="main-blue-gradient"></div>
@@ -35,7 +35,7 @@
               {{ $t("power-consumption") }}
             </div>
             <div class="font-geist-mono text-sm font-bold text-cyan-400">
-              5 {{ $t("units-hour") }}
+              {{ item?.asic?.info?.energy_per_hour }} {{ $t("units-hour") }}
             </div>
           </div>
         </div>

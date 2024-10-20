@@ -6,7 +6,9 @@ export default createStore({
     initData: null,
     shop: null,
     home: null,
-    powerStation: null
+    powerStation: null,
+    workshop: null,
+    farm: null
   },
   getters: {
     getUser(state){
@@ -23,6 +25,12 @@ export default createStore({
     },
     getPowerStation(state){
       return state.powerStation
+    },
+    getWorkShop(state){
+      return state.workshop
+    },
+    getFarm(state){
+      return state.farm
     }
   },
   mutations: {
@@ -40,6 +48,12 @@ export default createStore({
     },
     setPowerStation(state, powerStation){
       state.powerStation = powerStation
+    },
+    setWorkShop(state, workshop){
+      state.workshop = workshop
+    },
+    setFarm(state, farm){
+      state.farm = farm
     }
   }
 })

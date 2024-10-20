@@ -1,15 +1,11 @@
 <template>
   <main>
     <div class="pb-4 text-center">
-      <h2 class="font-patsy text-3xl text-white">
-        {{ $t("power-station") }}
-      </h2>
+      <h2 class="font-patsy text-3xl text-white">{{ $t("power-station") }}</h2>
     </div>
     <div class="grid grid-cols-2 gap-5 py-6">
       <div class="relative">
-        <h5 class="-mb-4 text-center font-patsy text-lg">
-          <span class="text-white">{{ $t("level") }} {{ getPowerStation?.grade?.level }}</span> /{{ getPowerStation?.max_up?.level }}
-        </h5>
+        <h5 class="-mb-4 text-center font-patsy text-lg"><span class="text-white">{{ $t("grade") }} {{ getPowerStation?.grade?.level }}</span> /{{ getPowerStation?.max_up?.level }}</h5>
         <div class="max-w-40">
           <img class="w-full" :src="getPowerStation?.grade?.image" />
         </div>
@@ -17,60 +13,42 @@
       </div>
       <div class="grid content-center pt-10">
         <div class="flex items-center pb-2">
-          <img
-            class="h-7 w-7 flex-shrink-0 object-contain"
-            src="@/assets/images/icons/ton-slate.png"
-          />
+          <img class="h-7 w-7 flex-shrink-0 object-contain" src="@/assets/images/icons/ton-slate.png" />
           <div class="pl-3">
-            <p class="text-xs">
-              {{ $t("energy-unit-price") }}
-            </p>
+            <p class="text-xs">{{ $t("energy-unit-price") }}</p>
             <p class="font-geist-mono text-sm font-semibold text-cyan-400">{{ getPowerStation?.power_cost_per_hour }} TON</p>
           </div>
         </div>
         <div class="main-blue-gradient"></div>
         <div class="flex items-center py-2">
-          <img
-            class="h-6 w-6 flex-shrink-0 object-contain"
-            src="@/assets/images/icons/lightning.png"
-          />
+          <img class="h-6 w-6 flex-shrink-0 object-contain" src="@/assets/images/icons/lightning.png" />
           <div class="pl-3">
             <p class="text-xs">{{ $t("power_station.income_power") }}</p>
-            <p class="font-geist-mono text-sm font-semibold text-cyan-400">
-              {{ getPowerStation?.grade?.power_per_hour }} {{ $t("units-hour") }}
-            </p>
+            <p class="font-geist-mono text-sm font-semibold text-cyan-400">{{ getPowerStation?.grade?.power_per_hour }} {{ $t("units-hour") }}</p>
           </div>
         </div>
         <div class="main-blue-gradient"></div>
         <div class="flex pt-2">
           <img class="h-6 w-6 flex-shrink-0 object-contain" src="@/assets/images/icons/debt.png" />
           <div class="pl-3 flex-1">
-            <p class="text-xs">
-              {{ $t("debt") }}
-            </p>
+            <p class="text-xs">{{ $t("debt") }}</p>
             <p class="font-geist-mono text-sm font-semibold text-red-600">{{ getPowerStation?.debt }} TON</p>
             <div class="mt-2" v-if="getPowerStation?.debt > 0">
               <button class="min-w-32 rounded-xl border border-cyan-400/50" @click="goPay">
-                <p class="p-2 text-sm text-white">
-                  {{ $t("pay") }}
-                </p>
+                <p class="p-2 text-sm text-white">{{ $t("pay") }}</p>
               </button>
             </div>
           </div>
         </div>
       </div>
     </div>
-
     <div class="main-action--green m-2" @click="goMoreBoost">
       <div class="mx-auto flex items-center text-sm">
-        <p class="pr-2 text-white">
-          {{ $t("boost") }}
-        </p>
+        <p class="pr-2 text-white">{{ $t("boost") }}</p>
       </div>
     </div>
-
     <div class="grid grid-cols-3 gap-1 py-2">
-      <article class="figure-shape" v-for="generator in getPowerStation?.generators" :key="generator?.id">
+      <article class="figure-shape" v-for="generator in getPowerStation?.generators" :key="generator?.id" @click="goDetails(generator)">
         <img class="aboslute position-center w-3/4" :src="generator?.info?.image" />
         <div class="bg-shape-radial--fuchsia h-3/4 w-3/4 blur-sm"></div>
         <img class="figure-shape--bg" src="@/assets/images/shapes/decagon-with-item.png" />
@@ -79,7 +57,7 @@
         <img class="figure-shape--bg" src="@/assets/images/shapes/decagon-empty.png" />
       </article>
     </div>
-    <Modal :show="showModal" :summ="summ" @close="closeModal" :variant="variant" :level="level" />
+    <Modal :show="showModal" :item="item" @close="closeModal" :variant="variant" :summ="summ" />
   </main>
 </template>
 
@@ -94,8 +72,7 @@ export default {
     return {
       summ: 0,
       showModal: false,
-      variant: 0,
-      level: 0
+      variant: 0
     }
   },
   computed: {
@@ -117,10 +94,11 @@ export default {
     goHome() {
       this.$router.push("/");
     },
-    goPay(){
+    goDetails(item){
       this.showModal = true
-      this.summ = this.getPowerStation?.debt
+      this.item = item
       this.variant = 1
+      this.summ = this.getPowerStation?.debt
     },
     goMoreBoost() {
       this.$router.push({ name: "boost", query: { power: "active" } });
@@ -143,7 +121,18 @@ export default {
           this.$store.commit('setPowerStation', res?.data?.data)
         }
       });
+    },
+    goPay(){
+      this.showModal = true
+      this.variant = 2
+      this.summ = this.getPowerStation?.debt
     }
   },
 };
 </script>
+
+<style lang="scss" scoped>
+  .main-action--green{
+    width: auto;
+  }
+</style>

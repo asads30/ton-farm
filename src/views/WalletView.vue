@@ -42,7 +42,7 @@
             {{ $t("connected") }}
           </p>
         </div>
-
+        <TonConnectButton/>
         <button class="menu-item rounded-xl bg-cyan-400/20 p-2">
           <div class="flex items-center px-3">
             <p class="mr-auto text-xs text-white">EQDo...IetE</p>
@@ -117,11 +117,13 @@
 
 <script>
 import Bottombar from "@/components/Bottombar.vue";
+import { TonConnectButton } from '@townsquarelabs/ui-vue';
 
 export default {
   name: "WalletView",
   components: {
     Bottombar,
+    TonConnectButton
   },
   mounted() {
     let tg = window?.Telegram?.WebApp;

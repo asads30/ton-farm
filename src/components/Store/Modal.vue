@@ -62,18 +62,21 @@
         </div>
         <div class="rounded-lg border border-dashed border-cyan-400/65">
           <div class="p-2 text-center">
-            <div class="pb-1 text-[10px]">
-              {{ $t("chance-getting-better-asic") }}
-            </div>
-            <div class="font-geist-mono text-2xl font-semibold text-cyan-400">25%</div>
+            <p><strong>{{ $t('lootbox.variants') }}</strong></p>
+            <div class="pb-1 text-[10px]">Nanogrid Q9</div>
+            <div class="pb-1 text-[10px]">Velochip X2</div>
+            <div class="pb-1 text-[10px]">Optistream-64</div>
+            <div class="pb-1 text-[10px]">Quantumtrace Z1</div>
+            <div class="pb-1 text-[10px]">Hyperflux A7</div>
+            <div class="pb-1 text-[10px]">Pulselogic G8</div>
           </div>
         </div>
-        <div class="main-action--green mt-10">
+        <button @click="buyItem('loot_box', item?.level)" class="main-action--green mt-10">
           <div class="mx-auto flex items-center py-1 text-sm">
             <p class="pr-2 text-white">{{ $t("buy") }}</p>
             <p class="font-geist-mono font-semibold text-cyan-400">{{ item?.cost }} TON</p>
           </div>
-        </div>
+        </button>
       </template>
       <template v-if="modalType === 'other'">
         <div class="mx-auto max-w-36 pb-8">

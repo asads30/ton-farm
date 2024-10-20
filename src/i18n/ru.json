@@ -1,11 +1,17 @@
 {
+  "lootbox": {
+    "variants": "Варианты выигрыша"
+  },
   "level": "Уровень",
   "income-power": "Доход",
   "total-mined": "Всего заработано",
   "grade": "Грейд",
   "mining-interrupted": "Добыча остановлена",
   "home": "Главная",
-  "refferal": "Рефералы",
+  "refferal": {
+    "title": "Рефералы",
+    "level": "Уровень реферальной системы"
+  },
   "boost-tab": "Ускорение",
   "wallet": "Кошелек", 
   "info": "Информация",
@@ -98,6 +104,6 @@
   "ok": "Ок",
   "choose-language": "Выберите язык",
   "power_station": {
-    "income_power": "Мощность дохода"
+    "income_power": "Мощность"
   }
 }

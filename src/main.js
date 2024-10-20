@@ -7,6 +7,7 @@ import { languages } from '@/i18n/index'
 import "@/assets/css/app.css";
 import Toast from "vue-toastification";
 import "vue-toastification/dist/index.css";
+import { TonConnectUIPlugin } from '@townsquarelabs/ui-vue'
 
 const messages = Object.assign(languages)
 
@@ -19,4 +20,4 @@ const i18n = createI18n({
     messages
 })
 
-createApp(App).use(store).use(router).use(i18n).use(Toast, options).mount("#app");
+createApp(App).use(store).use(router).use(i18n).use(Toast, options).use(TonConnectUIPlugin,{ manifestUrl: "https://tonfarm.netlify.app/tonconnect-manifest.json" }).mount("#app");

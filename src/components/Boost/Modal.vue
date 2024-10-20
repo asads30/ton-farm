@@ -15,13 +15,13 @@
           <div class="font-geist-mono text-2xl font-bold text-blue-400">{{ item?.next_grade?.cost }} TON</div>
         </div>
       </div>
-      <button class="main-action--green mt-5" @click="levelUp" v-if="variant == 1">
+      <button class="main-action--green mt-5" @click="goAction" v-if="variant == 1">
         <div class="mx-auto flex items-center py-1 text-sm">
           <p class="pr-2 text-white">{{ $t("pay") }}</p>
           <p class="font-geist-mono font-semibold text-cyan-400">{{ item?.next_level?.cost }} TON</p>
         </div>
       </button>
-      <button class="main-action--green mt-5" @click="gradeUp" v-else>
+      <button class="main-action--green mt-5" @click="goAction" v-else>
         <div class="mx-auto flex items-center py-1 text-sm">
           <p class="pr-2 text-white">{{ $t("pay") }}</p>
           <p class="font-geist-mono font-semibold text-cyan-400">{{ item?.next_grade?.cost }} TON</p>
@@ -47,7 +47,8 @@ export default {
   props: {
     show: Boolean,
     variant: Number,
-    item: Object
+    item: Object,
+    type: "farm" | "powerstation" | "workshop"
   },
   computed: {
     ...mapGetters([
@@ -57,6 +58,42 @@ export default {
   methods: {
     closeModal() {
       this.$emit("close");
+    },
+    goAction(){
+      if(this.type == 'powerstation'){
+        if(this.variant == 1){
+          let data = {
+            initData: this.getInitData ? this.getInitData : "user=%7B%22id%22%3A5850887936%2C%22first_name%22%3A%22Asadbek%22%2C%22last_name%22%3A%22Ibragimov%22%2C%22username%22%3A%22webmonster_uz%22%2C%22language_code%22%3A%22ru%22%2C%22allows_write_to_pm%22%3Atrue%7D&chat_instance=-1442677966141426206&chat_type=group&auth_date=1727613930&hash=08188303ad38ea8c0213a6df5da80738a9395e33ff55438820988a30274542f4",
+            t: "powerstation",
+            a: "level_up"
+          };
+          axios.post("https://tonminefarm.com/request", data).then(res => {
+            this.$emit("close");
+            if (res.data.status === 200) {
+              this.getPowerStationData();
+              this.toast.success('Вы перешли на следующий уровень!');
+            } else{
+              this.toast.error(res.data.status_text);
+            }
+          })
+        } else{
+          let data = {
+            initData: this.getInitData ? this.getInitData : "user=%7B%22id%22%3A5850887936%2C%22first_name%22%3A%22Asadbek%22%2C%22last_name%22%3A%22Ibragimov%22%2C%22username%22%3A%22webmonster_uz%22%2C%22language_code%22%3A%22ru%22%2C%22allows_write_to_pm%22%3Atrue%7D&chat_instance=-1442677966141426206&chat_type=group&auth_date=1727613930&hash=08188303ad38ea8c0213a6df5da80738a9395e33ff55438820988a30274542f4",
+            t: "powerstation",
+            a: "grade_up"
+          };
+          axios.post("https://tonminefarm.com/request", data).then(res => {
+            this.$emit("close");
+            if (res.data.status === 200) {
+              this.getPowerStationData();
+              this.toast.success('Вы перешли на следующий уровень!');
+              this.$forceUpdate();
+            } else{
+              this.toast.error(res.data.status_text);
+            }
+          })
+        }
+      }
     },
     getPowerStationData(){
       let data = {
@@ -70,40 +107,18 @@ export default {
         }
       });
     },
-    levelUp(){
+    getWorkShopData(){
       let data = {
         initData: this.getInitData ? this.getInitData : "user=%7B%22id%22%3A5850887936%2C%22first_name%22%3A%22Asadbek%22%2C%22last_name%22%3A%22Ibragimov%22%2C%22username%22%3A%22webmonster_uz%22%2C%22language_code%22%3A%22ru%22%2C%22allows_write_to_pm%22%3Atrue%7D&chat_instance=-1442677966141426206&chat_type=group&auth_date=1727613930&hash=08188303ad38ea8c0213a6df5da80738a9395e33ff55438820988a30274542f4",
-        t: "powerstation",
-        a: "boost",
-        type: "level_up"
+        t: "workstation",
+        a: "get",
       };
-      axios.post("https://tonminefarm.com/request", data).then(res => {
-        this.$emit("close");
+      axios.post("https://tonminefarm.com/request", data).then((res) => {
         if (res.data.status === 200) {
-          this.getPowerStationData();
-          this.toast.success('Вы перешли на следующий уровень!');
-        } else{
-          this.toast.error(res.data.status_text);
+          this.$store.commit('setWorkShop', res?.data?.data)
         }
-      })
-    },
-    gradeUp(){
-      let data = {
-        initData: this.getInitData ? this.getInitData : "user=%7B%22id%22%3A5850887936%2C%22first_name%22%3A%22Asadbek%22%2C%22last_name%22%3A%22Ibragimov%22%2C%22username%22%3A%22webmonster_uz%22%2C%22language_code%22%3A%22ru%22%2C%22allows_write_to_pm%22%3Atrue%7D&chat_instance=-1442677966141426206&chat_type=group&auth_date=1727613930&hash=08188303ad38ea8c0213a6df5da80738a9395e33ff55438820988a30274542f4",
-        t: "powerstation",
-        a: "boost",
-        type: "grade_up"
-      };
-      axios.post("https://tonminefarm.com/request", data).then(res => {
-        this.$emit("close");
-        if (res.data.status === 200) {
-          this.getPowerStationData();
-          this.toast.success('Вы перешли на следующий уровень!');
-        } else{
-          this.toast.error(res.data.status_text);
-        }
-      })
+      });
     }
-  },
+  }
 };
 </script>

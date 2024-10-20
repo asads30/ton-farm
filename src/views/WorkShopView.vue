@@ -9,10 +9,10 @@
       <div class="relative">
         <h5 class="-mb-4 text-center font-patsy text-lg">
           <span class="text-white">
-            {{ $t("level") }} 1</span> /5
+            {{ $t("grade") }} {{ getWorkShop?.grade?.level }}</span> /{{ getWorkShop?.max_up?.level }}
         </h5>
         <div class="max-w-40 mt-2">
-          <img class="w-full" src="@/assets/images/sections/workshop-2.png" />
+          <img class="w-full" :src="getWorkShop?.grade?.image" />
         </div>
         <div class="bg-shape-radial--fuchsia h-28 w-80 blur-3xl"></div>
       </div>
@@ -26,7 +26,7 @@
             <p class="text-xs">
               {{ $t("slots-available") }}
             </p>
-            <p class="font-geist-mono text-sm font-semibold text-cyan-400">1</p>
+            <p class="font-geist-mono text-sm font-semibold text-cyan-400">{{ getWorkShop?.grade?.slots }}</p>
           </div>
         </div>
         <div class="main-blue-gradient"></div>
@@ -39,47 +39,52 @@
             <p class="text-xs">
               {{ $t("slots-used") }}
             </p>
-            <p class="font-geist-mono text-sm font-semibold text-cyan-400">1</p>
+            <p class="font-geist-mono text-sm font-semibold text-cyan-400">{{ getWorkShop?.all_slots_used_count }}</p>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="main-action--green m-2">
+    <button @click="goMoreBoost" class="main-action--green">
       <div class="mx-auto flex items-center text-sm">
         <p class="pr-2 text-white">
           {{ $t("boost") }}
         </p>
       </div>
-    </div>
+    </button>
 
     <div class="grid grid-cols-3 gap-1 py-2">
       <article
         class="figure-shape"
-        v-for="item in list"
+        v-for="item in getWorkShop?.my_slots"
         :key="item.id"
-        @click="showModalHandle(item)"
+        @click="goItem(item)"
       >
-        <template v-if="item.status === 1">
+        <template v-if="!item.asic">
           <img class="figure-shape--bg" src="@/assets/images/shapes/red-hexagon-empty.png" />
         </template>
-        <template v-if="item.status === 2">
-          <div class="linear-border--red position-center-x">
-            <span class="text-xs text-cyan-400">75%</span>
+        <template v-else>
+          <div class="linear-border--red position-center-x" v-if="item?.asic?.info">
+            <span class="text-xs text-cyan-400">{{ item?.asic?.repair_percent }}%</span>
           </div>
-          <img class="aboslute position-center w-3/4" src="@/assets/images/stations/02.png" />
+          <img class="aboslute position-center w-3/4" :src="item?.asic?.info?.image" />
           <div class="bg-shape-radial--fuchsia h-3/4 w-3/4 blur-sm"></div>
           <img class="figure-shape--bg" src="@/assets/images/shapes/red-hexagon-with-item.png" />
         </template>
-        <template v-if="item.status === 3">
-          <div class="position-center">
+      </article>
+      <article
+        class="figure-shape"
+        v-for="item in lockedSlots"
+        v-if="lockedSlots"
+        :key="item"
+      >
+        <div class="position-center">
             <img class="mx-auto mb-1 block w-8" src="@/assets/images/icons/lock-yellow.png" />
             <p class="font-patsy text-xs text-rose-400">
               {{ $t("locked") }}
             </p>
           </div>
           <img class="figure-shape--bg" src="@/assets/images/shapes/red-hexagon-locked.png" />
-        </template>
       </article>
     </div>
   </main>
@@ -88,6 +93,8 @@
 
 <script>
 import Modal from "@/components/WorkShop/Modal.vue";
+import { mapGetters } from "vuex";
+import axios from 'axios'
 
 export default {
   name: "WorkShopView",
@@ -129,6 +136,15 @@ export default {
       item: null,
     };
   },
+  computed: {
+    ...mapGetters([
+      'getInitData',
+      'getWorkShop'
+    ]),
+    lockedSlots(){
+      return Number(this.getWorkShop?.max_up?.slots) - Number(this.getWorkShop?.grade?.slots)
+    }
+  },
   components: {
     Modal,
   },
@@ -136,6 +152,9 @@ export default {
     let tg = window?.Telegram?.WebApp;
     tg.BackButton.show();
     tg.onEvent("backButtonClicked", this.goHome);
+    if(!this.getPowerStation){
+      this.getWorkShopData()
+    }
   },
   methods: {
     goHome() {
@@ -153,6 +172,29 @@ export default {
       this.showModal = false;
       this.item = null;
     },
+    getWorkShopData(){
+      let data = {
+        initData: this.getInitData ? this.getInitData : "user=%7B%22id%22%3A5850887936%2C%22first_name%22%3A%22Asadbek%22%2C%22last_name%22%3A%22Ibragimov%22%2C%22username%22%3A%22webmonster_uz%22%2C%22language_code%22%3A%22ru%22%2C%22allows_write_to_pm%22%3Atrue%7D&chat_instance=-1442677966141426206&chat_type=group&auth_date=1727613930&hash=08188303ad38ea8c0213a6df5da80738a9395e33ff55438820988a30274542f4",
+        t: "workstation",
+        a: "get",
+      };
+      axios.post("https://tonminefarm.com/request", data).then((res) => {
+        if (res.data.status === 200) {
+          this.$store.commit('setWorkShop', res?.data?.data)
+        }
+      });
+    },
+    goMoreBoost() {
+      this.$router.push({ name: "boost", query: { workshop: "active" } });
+    },
+    goItem(item){
+      if(item?.asic){
+        this.showModal = true
+        this.item = item?.asic
+      } else{
+        this.$router.push('/farm')
+      }
+    }
   },
 };
 </script>

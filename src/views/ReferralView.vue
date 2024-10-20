@@ -34,6 +34,13 @@
       </div>
       <div class="h-[1px] w-full bg-slate-800 my-2"></div>
       <div class="flex items-center text-left">
+        <p class="mr-auto font-light text-zinc-300 text-xs">
+          {{ $t("refferal.level") }}
+        </p>
+        <p class="font-geist-mono text-lg">1</p>
+      </div>
+      <div class="h-[1px] w-full bg-slate-800 my-2"></div>
+      <div class="flex items-center text-left">
         <p class="mr-auto font-light text-zinc-300">
           {{ $t("total-referrals") }}
         </p>

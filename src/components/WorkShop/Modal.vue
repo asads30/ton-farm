@@ -8,7 +8,7 @@
         <h4 class="font-patsy text-lg text-white">{{ item.title }}</h4>
       </div>
       <div class="mx-auto max-w-36 pb-4">
-        <img src="@/assets/images/stations/01.png" />
+        <img :src="item?.info?.image" />
       </div>
       <div class="rounded-lg border border-dashed border-cyan-400/65">
         <div class="grid content-center p-3">
@@ -20,7 +20,7 @@
             <div class="mr-auto pl-3 text-xs">
               {{ $t("mining-speed") }}
             </div>
-            <div class="font-geist-mono text-sm font-bold text-cyan-400">0.1 TON/h</div>
+            <div class="font-geist-mono text-sm font-bold text-cyan-400">{{ item?.info?.ton_per_hour }} TON/h</div>
           </div>
           <div class="main-blue-gradient"></div>
           <div class="flex items-center pt-3">
@@ -32,29 +32,29 @@
               {{ $t("power-consumption") }}
             </div>
             <div class="font-geist-mono text-sm font-bold text-cyan-400">
-              5 {{ $t("units-hour") }}
+              {{ item?.info?.energy_per_hour }} {{ $t("units-hour") }}
             </div>
           </div>
         </div>
       </div>
       <div class="pt-5">
         <div class="flex">
-          <div class="text-xs">75%</div>
-          <div class="ml-auto text-xs">00:19</div>
+          <div class="text-xs">{{ progressPercent }}%</div>
+          <div class="ml-auto text-xs">{{ formattedTime }}</div>
         </div>
         <div class="pb-2 pt-1">
-          <div class="line-progress" style="--width: 50%"></div>
+          <div class="line-progress" :style="'--width:' + progressPercent + '%'"></div>
         </div>
       </div>
       <div class="pt-3">
-        <div class="main-action--green">
+        <button @click="goBoost" class="main-action--green">
           <div class="mx-auto flex items-center py-1 text-sm">
             <p class="pr-2 text-white">
               {{ $t("boost-repair-for") }}
             </p>
-            <p class="font-geist-mono font-semibold text-cyan-400">0.43 TON</p>
+            <p class="font-geist-mono font-semibold text-cyan-400">{{ boostCost.toFixed(2) }} TON</p>
           </div>
-        </div>
+        </button>
       </div>
     </div>
   </section>
@@ -62,8 +62,39 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+
 export default {
   name: "WorkShopModal",
+  data() {
+    return {
+      intervalId: null,
+      remainingTime: null,
+    }
+  },
+  computed: {
+    formattedTime() {
+      const minutes = Math.floor(this.remainingTime / 60);
+      const seconds = this.remainingTime % 60;
+      return `${this.pad(minutes)}:${this.pad(seconds)}`;
+    },
+    progressPercent() {
+      const elapsedTime = this.item?.total_time - this.remainingTime;
+      return Math.floor((elapsedTime / this.item?.total_time) * 100);
+    },
+    boostCost() {
+      const remainingSeconds = this.remainingTime;
+      const costPerSecond = Number(this.item?.repair_boost_cost_per_hour) / 3600;
+      return remainingSeconds * costPerSecond;
+    },
+    ...mapGetters([
+      'getInitData'
+    ]),
+  },
+  mounted() {
+    this.updateTimer();
+    this.intervalId = setInterval(this.updateTimer, 1000);
+  },
   props: {
     show: Boolean,
     item: Object,
@@ -72,6 +103,34 @@ export default {
     closeModal() {
       this.$emit("close");
     },
+    pad(value) {
+      return value < 10 ? '0' + value : value;
+    },
+    updateTimer() {
+      const currentTime = Math.floor(Date.now() / 1000);
+      this.remainingTime = this.item?.repair_timer_stop - currentTime;
+      if (this.remainingTime <= 0) {
+        clearInterval(this.intervalId);
+        this.remainingTime = 0;
+      }
+    },
+    goBoost(){
+      let data = {
+        initData: this.getInitData ? this.getInitData : "user=%7B%22id%22%3A5850887936%2C%22first_name%22%3A%22Asadbek%22%2C%22last_name%22%3A%22Ibragimov%22%2C%22username%22%3A%22webmonster_uz%22%2C%22language_code%22%3A%22ru%22%2C%22allows_write_to_pm%22%3Atrue%7D&chat_instance=-1442677966141426206&chat_type=group&auth_date=1727613930&hash=08188303ad38ea8c0213a6df5da80738a9395e33ff55438820988a30274542f4",
+        t: "powerstation",
+        a: "pay_debt"
+      };
+      axios.post("https://tonminefarm.com/request", data).then(res => {
+        if(res.data.status == 200){
+          this.$emit("close");
+          this.getPowerStationData()
+          this.toast.success('Вы успешно погасили долг!');
+        }
+      })
+    }
+  },
+  beforeDestroy() {
+    clearInterval(this.intervalId);
   },
 };
 </script>
