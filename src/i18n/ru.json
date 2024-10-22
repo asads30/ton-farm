@@ -1,17 +1,9 @@
 {
-  "lootbox": {
-    "variants": "Варианты выигрыша"
-  },
   "level": "Уровень",
   "income-power": "Доход",
   "total-mined": "Всего заработано",
   "grade": "Грейд",
   "mining-interrupted": "Добыча остановлена",
-  "home": "Главная",
-  "refferal": {
-    "title": "Рефералы",
-    "level": "Уровень реферальной системы"
-  },
   "boost-tab": "Ускорение",
   "wallet": "Кошелек", 
   "info": "Информация",
@@ -23,7 +15,6 @@
   "power-consumption": "Энергопотребление",
   "units-hour": "единиц/ч",
   "units": "единицы",
-  "boost": "Ускорить",
   "restart-mining": "Возобновить добычу",
   "locked": "недоступно",
   "mining-speed": "Скорость майнинга",
@@ -105,5 +96,23 @@
   "choose-language": "Выберите язык",
   "power_station": {
     "income_power": "Мощность"
+  },
+  "home": {
+    "title": "Главная",
+    "claim": "Забрать",
+    "price": "Цена"
+  },
+  "refferal": {
+    "title": "Рефералы",
+    "level": "Уровень реферальной системы"
+  },
+  "lootbox": {
+    "variants": "Варианты выигрыша"
+  },
+  "boost": {
+    "title": "Ускорить",
+    "workshop": {
+      "price": "Стоимость починки"
+    }
   }
 }

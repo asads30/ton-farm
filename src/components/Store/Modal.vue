@@ -63,15 +63,10 @@
         <div class="rounded-lg border border-dashed border-cyan-400/65">
           <div class="p-2 text-center">
             <p><strong>{{ $t('lootbox.variants') }}</strong></p>
-            <div class="pb-1 text-[10px]">Nanogrid Q9</div>
-            <div class="pb-1 text-[10px]">Velochip X2</div>
-            <div class="pb-1 text-[10px]">Optistream-64</div>
-            <div class="pb-1 text-[10px]">Quantumtrace Z1</div>
-            <div class="pb-1 text-[10px]">Hyperflux A7</div>
-            <div class="pb-1 text-[10px]">Pulselogic G8</div>
+            <div class="pb-1 text-[10px]" v-for="asic in item?.asics" :key="asic?.id">{{ asic?.model }}</div>
           </div>
         </div>
-        <button @click="buyItem('loot_box', item?.level)" class="main-action--green mt-10">
+        <button @click="buyLootbox(item)" class="main-action--green mt-10">
           <div class="mx-auto flex items-center py-1 text-sm">
             <p class="pr-2 text-white">{{ $t("buy") }}</p>
             <p class="font-geist-mono font-semibold text-cyan-400">{{ item?.cost }} TON</p>
@@ -109,6 +104,13 @@
     </div>
   </section>
   <div :class="show && 'overlay'"></div>
+  <Win :isVisible="isVisible" @close="isVisible = false">
+    <div class="win-content">
+      <h2>Вы выиграли</h2>
+      <h4>{{ win?.model }}</h4>
+      <img :src="win?.image" alt="">
+    </div>
+  </Win>
 </template>
 
 <script>
@@ -116,14 +118,21 @@ import utils from "@/utils";
 import axios from 'axios'
 import { mapGetters } from "vuex";
 import { useToast } from 'vue-toastification'
+import Win from './Win.vue'
+import confetti from 'canvas-confetti';
 
 export default {
   name: "StoreModal",
   data() {
     return {
       utils,
-      toast: useToast()
+      toast: useToast(),
+      isVisible: false,
+      win: null
     };
+  },
+  components: {
+    Win
   },
   computed: {
     ...mapGetters([
@@ -151,11 +160,36 @@ export default {
         if(res.data.status === 200){
           this.$emit("close");
           this.toast.success('Успешно куплено!');
-          this.getShopData()
+          this.getShopData();
         } else{
           this.toast.error(res.data.status_text)
         }
       })
+    },
+    buyLootbox(item){
+      const data = {
+        initData: this.getInitData ? this.getInitData : "user=%7B%22id%22%3A5850887936%2C%22first_name%22%3A%22Asadbek%22%2C%22last_name%22%3A%22Ibragimov%22%2C%22username%22%3A%22webmonster_uz%22%2C%22language_code%22%3A%22ru%22%2C%22allows_write_to_pm%22%3Atrue%7D&chat_instance=-1442677966141426206&chat_type=group&auth_date=1727613930&hash=08188303ad38ea8c0213a6df5da80738a9395e33ff55438820988a30274542f4",
+        t: "shop",
+        a: "buy",
+        level: item?.level,
+        item: "loot_box"
+      }
+      axios.post('https://tonminefarm.com/request', data).then(res => {
+        if(res.data.status === 200){
+          this.win = res?.data?.win_asic
+          this.$emit("close");
+          this.getShopData();
+          confetti({
+            particleCount: 100, // Количество частиц конфетти
+            spread: 70,         // Распределение частиц
+            origin: { y: 0.6 }  // Место, откуда летят конфетти
+          });
+          this.$emit("close");
+          this.isVisible = true
+        } else{
+          this.toast.error(res.data.status_text)
+        }
+      })      
     },
     getShopData(){
       let data = {
@@ -176,5 +210,21 @@ export default {
 <style lang="scss" scoped>
 .main-action--green{
   width: 100%;
+}
+.win-content{
+  color: #fff;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  h2{
+    font-size: 30px;
+    font-weight: 700;
+    margin-bottom: 20px;
+  }
+  img{
+    width: 140px;
+  }
 }
 </style>

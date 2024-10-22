@@ -4,7 +4,6 @@
   "total-mined": "Total mined",
   "grade": "Grade",
   "mining-interrupted": "Mining interrupted",
-  "home": "Home",
   "refferal": "Refferal",
   "boost-tab": "Boost",
   "wallet": "Wallet",
@@ -99,5 +98,10 @@
   "choose-language": "Choose language",
   "power_station": {
     "income_power": "Income power"
+  },
+  "home": {
+    "title": "Home",
+    "claim": "Claim",
+    "price": "Price"
   }
 }

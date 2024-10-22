@@ -26,7 +26,7 @@
               <div class="pl-2">
                 <p class="text-xs">{{ $t("income-power") }}</p>
                 <p class="font-geist-mono font-semibold text-green-300">
-                  {{ info?.account?.ups }} TON/h
+                  {{ info?.account?.income_power }} TON/h
                 </p>
               </div>
               <div class="bg-shape--cyan"></div>
@@ -86,6 +86,7 @@
 import axios from "axios";
 import Bottombar from "@/components/Bottombar.vue";
 import Modal from "@/components/Home/Modal.vue";
+import confetti from 'canvas-confetti';
 
 export default {
   name: "HomeView",
@@ -94,7 +95,7 @@ export default {
       info: null,
       isLoading: true,
       item: null,
-      showModal: false
+      showModal: false,
     };
   },
   components: {
@@ -124,6 +125,11 @@ export default {
           if(res?.data?.data?.account?.first_entry == 1){
             this.showModal = true
             this.item = res?.data?.data?.farm?.my_asics[0]
+            confetti({
+              particleCount: 100,
+              spread: 70,
+              origin: { y: 0.6 }
+            });
           }
         }
       });

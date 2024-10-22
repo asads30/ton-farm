@@ -48,7 +48,7 @@
     <button @click="goMoreBoost" class="main-action--green">
       <div class="mx-auto flex items-center text-sm">
         <p class="pr-2 text-white">
-          {{ $t("boost") }}
+          {{ $t("boost.title") }}
         </p>
       </div>
     </button>

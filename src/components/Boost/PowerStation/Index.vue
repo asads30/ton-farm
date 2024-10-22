@@ -31,6 +31,11 @@
                     <p class="font-geist-mono text-sm font-semibold text-red-600">{{ getPowerStation?.debt }} TON</p>
                 </div>
             </div>
+            <div class="mt-2" v-if="getPowerStation?.debt > 0">
+              <button class="min-w-32 rounded-xl border border-cyan-400/50" @click="showModalHandle(2)">
+                <p class="p-2 text-sm text-white">{{ $t("pay") }}</p>
+              </button>
+            </div>
         </div>
     </div>
     <div class="linear-border--slate relative mt-10 w-full p-4">
@@ -53,7 +58,7 @@
                     </div>
                     <button class="main-action--green" @click="boost">
                         <div class="mx-auto flex items-center text-xs">
-                            <p class="pr-2 text-white">{{ $t("boost") }}</p>
+                            <p class="pr-2 text-white">{{ $t("boost.title") }}</p>
                             <p class="font-geist-mono font-semibold text-cyan-400">{{ boostCost.toFixed(2) }} TON</p>
                         </div>
                     </button>
@@ -86,32 +91,49 @@
     </div>
     <section v-if="showModal" class="modal border-radiant">
         <button class="absolute right-5 top-5" @click="closeModal">
-        <img class="w-6" src="@/assets/images/icons/close.png" />
+            <img class="w-6" src="@/assets/images/icons/close.png" />
         </button>
         <div class="py-4">
-        <div class="py-4">
-            <img class="mx-auto mb-5 w-28" src="@/assets/images/icons/arrows-upto.png" />
-            <div class="mb-10 py-4 text-center" v-if="variant == 1">
-            <div class="mb-3 text-sm text-slate-400">{{ $t("upgrade-to-level", { lvl: this.getPowerStation?.next_level?.level }) }}</div>
-            <div class="font-geist-mono text-2xl font-bold text-blue-400">{{ this.getPowerStation?.next_level?.cost }} TON</div>
-            </div>
-            <div class="mb-10 py-4 text-center" v-else>
-            <div class="mb-3 text-sm text-slate-400">{{ $t("upgrade-to-level", { lvl: this.getPowerStation?.next_grade?.level }) }}</div>
-            <div class="font-geist-mono text-2xl font-bold text-blue-400">{{ this.getPowerStation?.next_grade?.cost }} TON</div>
-            </div>
-        </div>
-        <button class="main-action--green mt-5" @click="goAction" v-if="variant == 1">
-            <div class="mx-auto flex items-center py-1 text-sm">
-            <p class="pr-2 text-white">{{ $t("pay") }}</p>
-            <p class="font-geist-mono font-semibold text-cyan-400">{{ this.getPowerStation?.next_level?.cost }} TON</p>
-            </div>
-        </button>
-        <button class="main-action--green mt-5" @click="goAction" v-else>
-            <div class="mx-auto flex items-center py-1 text-sm">
-            <p class="pr-2 text-white">{{ $t("pay") }}</p>
-            <p class="font-geist-mono font-semibold text-cyan-400">{{ this.getPowerStation?.next_grade?.cost }} TON</p>
-            </div>
-        </button>
+            <template v-if="variant == 2">
+                <img class="mx-auto mb-5 w-28" src="@/assets/images/icons/light-document.png" />
+                <div class="mb-10 py-4 text-center">
+                    <div class="mb-3 text-sm text-slate-400">{{ $t("current-electricity-debt") }}</div>
+                    <div class="font-geist-mono text-2xl font-bold text-red-500/90">
+                        {{ getPowerStation?.debt }} TON
+                    </div>
+                </div>
+                <button @click="goDebt" class="main-action--green mt-5">
+                    <div class="mx-auto flex items-center py-1 text-sm">
+                    <p class="pr-2 text-white">{{ $t("pay") }}</p>
+                    <p class="font-geist-mono font-semibold text-cyan-400">{{ getPowerStation?.debt }} TON</p>
+                    </div>
+                </button>
+            </template>
+            <template v-else>
+                <div class="py-4">
+                    <img class="mx-auto mb-5 w-28" src="@/assets/images/icons/arrows-upto.png" />
+                    <div class="mb-10 py-4 text-center" v-if="variant == 1">
+                        <div class="mb-3 text-sm text-slate-400">{{ $t("upgrade-to-level", { lvl: this.getPowerStation?.next_level?.level }) }}</div>
+                        <div class="font-geist-mono text-2xl font-bold text-blue-400">{{ this.getPowerStation?.next_level?.cost }} TON</div>
+                    </div>
+                    <div class="mb-10 py-4 text-center" v-if="variant == 0">
+                        <div class="mb-3 text-sm text-slate-400">{{ $t("upgrade-to-level", { lvl: this.getPowerStation?.next_grade?.level }) }}</div>
+                        <div class="font-geist-mono text-2xl font-bold text-blue-400">{{ this.getPowerStation?.next_grade?.cost }} TON</div>
+                    </div>
+                </div>
+                <button class="main-action--green mt-5" @click="goAction" v-if="variant == 1">
+                    <div class="mx-auto flex items-center py-1 text-sm">
+                        <p class="pr-2 text-white">{{ $t("pay") }}</p>
+                        <p class="font-geist-mono font-semibold text-cyan-400">{{ this.getPowerStation?.next_level?.cost }} TON</p>
+                    </div>
+                </button>
+                <button class="main-action--green mt-5" @click="goAction" v-if="variant == 0">
+                    <div class="mx-auto flex items-center py-1 text-sm">
+                        <p class="pr-2 text-white">{{ $t("pay") }}</p>
+                        <p class="font-geist-mono font-semibold text-cyan-400">{{ this.getPowerStation?.next_grade?.cost }} TON</p>
+                    </div>
+                </button>
+            </template>
         </div>
     </section>
     <div :class="showModal && 'overlay'"></div>
@@ -182,6 +204,20 @@ export default {
                 this.item = this.getPowerStation;
                 this.variant = variant
             }
+        },
+        goDebt(){
+            let data = {
+                initData: this.getInitData ? this.getInitData : "user=%7B%22id%22%3A5850887936%2C%22first_name%22%3A%22Asadbek%22%2C%22last_name%22%3A%22Ibragimov%22%2C%22username%22%3A%22webmonster_uz%22%2C%22language_code%22%3A%22ru%22%2C%22allows_write_to_pm%22%3Atrue%7D&chat_instance=-1442677966141426206&chat_type=group&auth_date=1727613930&hash=08188303ad38ea8c0213a6df5da80738a9395e33ff55438820988a30274542f4",
+                t: "powerstation",
+                a: "pay_debt"
+            };
+            axios.post("https://tonminefarm.com/request", data).then(res => {
+                if(res.data.status == 200){
+                    this.closeModal()
+                    this.getPowerStationData()
+                    this.toast.success('Вы успешно погасили долг!');
+                }
+            })
         },
         closeModal() {
             this.showModal = false;

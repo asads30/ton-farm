@@ -41,14 +41,21 @@
         </div>
       </div>
       <div class="pt-6">
-        <div class="main-action--green">
+        <button @click="repair" class="main-action--green">
           <div class="mx-auto flex items-center py-1 text-sm">
             <p class="pr-2 text-white">
               {{ $t("repair") }}
             </p>
-            <p class="font-geist-mono font-semibold text-cyan-400">0.43 TON</p>
+            <p class="font-geist-mono font-semibold text-cyan-400">{{ item?.asic?.resource?.repair_cost }} TON</p>
           </div>
-        </div>
+        </button>
+        <button @click="deactivate" class="main-action--amber mt-4">
+          <div class="mx-auto flex items-center py-1 text-sm">
+            <p class="pr-2 text-white">
+              {{ $t("deactivate") }}
+            </p>
+          </div>
+        </button>
       </div>
     </div>
   </section>
@@ -56,16 +63,74 @@
 </template>
 
 <script>
+import axios from 'axios'
+import { mapGetters } from "vuex";
+import { useToast } from 'vue-toastification'
+
 export default {
   name: "FarmModal",
+  data() {
+    return {
+      toast: useToast()
+    }
+  },
   props: {
     show: Boolean,
     item: Object,
+  },
+  computed: {
+    ...mapGetters([
+      "getInitData"
+    ])
   },
   methods: {
     closeModal() {
       this.$emit("close");
     },
+    deactivate(){
+      const data = {
+        initData: this.getInitData ? this.getInitData : "user=%7B%22id%22%3A5850887936%2C%22first_name%22%3A%22Asadbek%22%2C%22last_name%22%3A%22Ibragimov%22%2C%22username%22%3A%22webmonster_uz%22%2C%22language_code%22%3A%22ru%22%2C%22allows_write_to_pm%22%3Atrue%7D&chat_instance=-1442677966141426206&chat_type=group&auth_date=1727613930&hash=08188303ad38ea8c0213a6df5da80738a9395e33ff55438820988a30274542f4",
+        t: "asic",
+        a: "deactivate",
+        asic_id: this.item?.asic?.id
+      }
+      axios.post('https://tonminefarm.com/request', data).then(res => {
+        if(res.data.status == 200){
+          this.toast.success('Успешно деактивировано!');
+          this.getFarmData()
+          this.$emit("close");
+        }
+      })
+    },
+    getFarmData(){
+      let data = {
+        initData: this.getInitData ? this.getInitData : "user=%7B%22id%22%3A5850887936%2C%22first_name%22%3A%22Asadbek%22%2C%22last_name%22%3A%22Ibragimov%22%2C%22username%22%3A%22webmonster_uz%22%2C%22language_code%22%3A%22ru%22%2C%22allows_write_to_pm%22%3Atrue%7D&chat_instance=-1442677966141426206&chat_type=group&auth_date=1727613930&hash=08188303ad38ea8c0213a6df5da80738a9395e33ff55438820988a30274542f4",
+        t: "farm",
+        a: "get",
+      };
+      axios.post("https://tonminefarm.com/request", data).then((res) => {
+        if (res.data.status === 200) {
+          this.$store.commit('setFarm', res?.data?.data)
+        }
+      });
+    },
+    repair(){
+      let data = {
+        initData: this.getInitData ? this.getInitData : "user=%7B%22id%22%3A5850887936%2C%22first_name%22%3A%22Asadbek%22%2C%22last_name%22%3A%22Ibragimov%22%2C%22username%22%3A%22webmonster_uz%22%2C%22language_code%22%3A%22ru%22%2C%22allows_write_to_pm%22%3Atrue%7D&chat_instance=-1442677966141426206&chat_type=group&auth_date=1727613930&hash=08188303ad38ea8c0213a6df5da80738a9395e33ff55438820988a30274542f4",
+        t: "asic",
+        a: "repair",
+        asic_id: this.item?.asic?.id
+      };
+      axios.post("https://tonminefarm.com/request", data).then((res) => {
+        if (res.data.status === 200) {
+          this.getFarmData();
+          this.toast.success('Починили');
+          this.$emit("close");
+        } else{
+          this.toast.error(res.data.status_text)
+        }
+      });
+    }
   },
 };
 </script>
@@ -79,5 +144,8 @@ export default {
     justify-content: flex-end;
     margin-bottom: 5px;
     margin-right: 10px;
+  }
+  .main-action--amber{
+    width: 100%;
   }
 </style>

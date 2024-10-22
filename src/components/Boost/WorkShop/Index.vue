@@ -11,7 +11,7 @@
             <div class="flex items-center pb-2">
                 <img class="h-7 w-7 flex-shrink-0 object-contain" src="@/assets/images/icons/ton-slate.png" />
                 <div class="pl-3">
-                    <p class="text-xs">{{ $t("energy-unit-price") }}</p>
+                    <p class="text-xs">{{ $t("boost.workshop.price") }}</p>
                     <p class="font-geist-mono text-sm font-semibold text-cyan-400">{{ getWorkShop?.power_cost_per_hour }} TON</p>
                 </div>
             </div>
@@ -21,14 +21,6 @@
                 <div class="pl-3">
                     <p class="text-xs">{{ $t("power_station.income_power") }}</p>
                     <p class="font-geist-mono text-sm font-semibold text-cyan-400">{{ getWorkShop?.grade?.power_per_hour }} {{ $t("units-hour") }}</p>
-                </div>
-            </div>
-            <div class="main-blue-gradient"></div>
-            <div class="flex items-center pt-2">
-                <img class="h-6 w-6 flex-shrink-0 object-contain" src="@/assets/images/icons/debt.png" />
-                <div class="pl-3">
-                    <p class="text-xs">{{ $t("debt") }}</p>
-                    <p class="font-geist-mono text-sm font-semibold text-red-600">{{ getWorkShop?.debt }} TON</p>
                 </div>
             </div>
         </div>
@@ -53,7 +45,7 @@
                     </div>
                     <button class="main-action--green" @click="boost">
                         <div class="mx-auto flex items-center text-xs">
-                            <p class="pr-2 text-white">{{ $t("boost") }}</p>
+                            <p class="pr-2 text-white">{{ $t("boost.title") }}</p>
                             <p class="font-geist-mono font-semibold text-cyan-400">{{ boostCost.toFixed(2) }} TON</p>
                         </div>
                     </button>

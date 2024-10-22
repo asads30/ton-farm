@@ -8,27 +8,54 @@
             <div class="bg-shape-radial--fuchsia h-28 w-80 blur-3xl"></div>
         </div>
         <div class="grid content-center pt-10">
-            <div class="flex items-center pb-2">
-                <img class="h-7 w-7 flex-shrink-0 object-contain" src="@/assets/images/icons/ton-slate.png" />
+            <div class="flex py-1">
+                <img class="h-9 w-9 flex-shrink-0 grayscale" src="@/assets/images/icons/generator.png" v-if="getFarm?.ups == 0" />
+                <img class="h-9 w-9 flex-shrink-0" :src="getFarm?.ups_image" v-else />
                 <div class="pl-3">
-                    <p class="text-xs">{{ $t("energy-unit-price") }}</p>
-                    <p class="font-geist-mono text-sm font-semibold text-cyan-400">{{ getFarm?.power_cost_per_hour }} TON</p>
+                    <p class="text-xs">{{ $t("ups") }}</p>
+                    <p class="font-geist-mono text-xs font-semibold">
+                        <span v-if="getFarm?.ups == 0">{{ $t("not-installed") }}</span>
+                        <span class="text-green-500" v-else>{{ $t("installed") }}</span>
+                    </p>
                 </div>
             </div>
             <div class="main-blue-gradient"></div>
-            <div class="flex items-center py-2">
-                <img class="h-6 w-6 flex-shrink-0 object-contain" src="@/assets/images/icons/lightning.png"/>
+            <div class="flex py-1">
+                <img class="h-9 w-9 flex-shrink-0" src="@/assets/images/mining-speed.svg" />
                 <div class="pl-3">
-                    <p class="text-xs">{{ $t("power_station.income_power") }}</p>
-                    <p class="font-geist-mono text-sm font-semibold text-cyan-400">{{ getFarm?.grade?.power_per_hour }} {{ $t("units-hour") }}</p>
+                    <p class="text-xs">
+                    {{ $t("income-hour") }}
+                    </p>
+                    <p class="font-geist-mono font-semibold text-cyan-400">
+                    {{ getFarm?.earn_per_hour }} <span class="text-xs">TON</span>
+                    </p>
                 </div>
             </div>
             <div class="main-blue-gradient"></div>
-            <div class="flex items-center pt-2">
-                <img class="h-6 w-6 flex-shrink-0 object-contain" src="@/assets/images/icons/debt.png" />
+            <div class="flex py-1 items-center">
+                <img class="h-9 w-9 flex-shrink-0" src="@/assets/images/icons/ton-slate.png" />
                 <div class="pl-3">
-                    <p class="text-xs">{{ $t("debt") }}</p>
-                    <p class="font-geist-mono text-sm font-semibold text-red-600">{{ getFarm?.debt }} TON</p>
+                    <p class="text-xs">
+                    {{ $t("uninterrupted-operation") }}
+                    </p>
+                    <p class="font-geist-mono font-semibold text-cyan-400">
+                    {{ getFarm?.total_mined }} <span class="text-xs">TON</span>
+                    </p>
+                </div>
+            </div>
+            <div class="main-blue-gradient"></div>
+            <div class="flex py-1">
+                <img class="h-8 w-8 flex-shrink-0" src="@/assets/images/icons/power-consumption.png" />
+                <div class="pl-3">
+                    <p class="text-xs">
+                    {{ $t("power-consumption") }}
+                    </p>
+                    <p class="font-geist-mono font-semibold text-cyan-400">
+                    {{ getFarm?.energy_per_hour }}
+                    <span class="text-xs">
+                        {{ $t("units-hour") }}
+                    </span>
+                    </p>
                 </div>
             </div>
         </div>
@@ -53,7 +80,7 @@
                     </div>
                     <button class="main-action--green" @click="boost">
                         <div class="mx-auto flex items-center text-xs">
-                            <p class="pr-2 text-white">{{ $t("boost") }}</p>
+                            <p class="pr-2 text-white">{{ $t("boost.title") }}</p>
                             <p class="font-geist-mono font-semibold text-cyan-400">{{ boostCost.toFixed(2) }} TON</p>
                         </div>
                     </button>

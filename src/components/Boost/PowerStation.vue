@@ -53,7 +53,7 @@
                     </div>
                     <button class="main-action--green" @click="boostPowerStation">
                         <div class="mx-auto flex items-center text-xs">
-                            <p class="pr-2 text-white">{{ $t("boost") }}</p>
+                            <p class="pr-2 text-white">{{ $t("boost.title") }}</p>
                             <p class="font-geist-mono font-semibold text-cyan-400">{{ boostCost.toFixed(2) }} TON</p>
                         </div>
                     </button>

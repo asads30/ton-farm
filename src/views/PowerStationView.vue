@@ -44,7 +44,7 @@
     </div>
     <div class="main-action--green m-2" @click="goMoreBoost">
       <div class="mx-auto flex items-center text-sm">
-        <p class="pr-2 text-white">{{ $t("boost") }}</p>
+        <p class="pr-2 text-white">{{ $t("boost.title") }}</p>
       </div>
     </div>
     <div class="grid grid-cols-3 gap-1 py-2">

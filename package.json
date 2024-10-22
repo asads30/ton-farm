@@ -19,6 +19,7 @@
     "@vue/cli-service": "~5.0.0",
     "autoprefixer": "^10.4.20",
     "axios": "^1.7.4",
+    "canvas-confetti": "^1.9.3",
     "crypto-js": "^4.2.0",
     "lottie-web": "^5.12.2",
     "postcss": "^8.4.47",

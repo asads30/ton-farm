@@ -4,7 +4,7 @@
       <li class="tabs__item">
         <router-link class="tabs__link" to="/">
           <img src="@/assets/images/tabs/tabs-home.png" />
-          <span>{{ $t("home") }}</span>
+          <span>{{ $t("home.title") }}</span>
         </router-link>
       </li>
       <li class="tabs__item">

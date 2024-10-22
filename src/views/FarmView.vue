@@ -74,7 +74,7 @@
     <router-link to="/boost" class="main-action--green mb-2" v-if="getFarm?.working == 1">
       <div class="mx-auto flex items-center text-sm">
         <p class="pr-2 text-white">
-          {{ $t("boost") }}
+          {{ $t("boost.title") }}
         </p>
       </div>
     </router-link>
@@ -98,9 +98,11 @@
           <img class="figure-shape--bg" src="@/assets/images/shapes/hexagon-empty.png" />
         </template>
         <template v-else>
-          <template v-if="item?.asic?.resource?.resources_used_percent < 70">
+          <template v-if="item?.asic?.resource?.resources_used_percent > 0">
             <div class="linear-border--main position-center-x">
-              <span class="text-xs text-cyan-400">{{ item?.asic?.resource?.resources_used_percent }}%</span>
+              <span class="text-xs text-cyan-400" v-if="item?.asic?.resource?.resources_used_percent > 10 && item?.asic?.resource?.working == 0">{{ item?.asic?.resource?.resources_used_percent }}%</span>
+              <span class="text-xs text-cyan-400 text-green-used" v-if="item?.asic?.resource?.resources_used_percent > 10 && item?.asic?.resource?.working == 1">{{ item?.asic?.resource?.resources_used_percent }}%</span>
+              <span class="text-xs text-cyan-400 text-red-used" v-if="item?.asic?.resource?.resources_used_percent < 11">{{ item?.asic?.resource?.resources_used_percent }}%</span>
             </div>
             <img class="aboslute position-center w-2/3" :src="item?.asic?.info?.image" />
             <div class="bg-shape-radial--fuchsia h-3/4 w-3/4 blur-sm"></div>
@@ -139,45 +141,15 @@
 import Modal from "@/components/Farm/Modal.vue";
 import { mapGetters } from "vuex";
 import axios from 'axios'
+import { useToast } from 'vue-toastification'
 
 export default {
   name: "FarmView",
   data() {
     return {
-      list: [
-        {
-          id: 1,
-          title: "Title 1",
-          status: 1,
-        },
-        {
-          id: 2,
-          title: "Title 2",
-          status: 2,
-        },
-        {
-          id: 3,
-          title: "Title 3",
-          status: 3,
-        },
-        {
-          id: 4,
-          title: "Title 3",
-          status: 3,
-        },
-        {
-          id: 5,
-          title: "Title 3",
-          status: 3,
-        },
-        {
-          id: 6,
-          title: "Title 3",
-          status: 4,
-        },
-      ],
       showModal: false,
       item: null,
+      toast: useToast()
     };
   },
   components: {
@@ -205,11 +177,15 @@ export default {
       this.$router.push("/");
     },
     showModalHandle(item) {
-      if (item.status === 3) {
-        return false;
-      } else {
-        this.showModal = true;
-        this.item = item;
+      if(item?.asic){
+        if (item.status === 3) {
+          return false;
+        } else {
+          this.showModal = true;
+          this.item = item;
+        }
+      } else{
+        this.$router.push('/store')
       }
     },
     closeModal() {
@@ -227,6 +203,21 @@ export default {
           this.$store.commit('setFarm', res?.data?.data)
         }
       });
+    },
+    goWorking(){
+      let data = {
+        initData: this.getInitData ? this.getInitData : "user=%7B%22id%22%3A5850887936%2C%22first_name%22%3A%22Asadbek%22%2C%22last_name%22%3A%22Ibragimov%22%2C%22username%22%3A%22webmonster_uz%22%2C%22language_code%22%3A%22ru%22%2C%22allows_write_to_pm%22%3Atrue%7D&chat_instance=-1442677966141426206&chat_type=group&auth_date=1727613930&hash=08188303ad38ea8c0213a6df5da80738a9395e33ff55438820988a30274542f4",
+        t: "farm",
+        a: "start_mining",
+      };
+      axios.post("https://tonminefarm.com/request", data).then((res) => {
+        if (res.data.status === 200) {
+          this.$store.commit('setFarm', res?.data?.data)
+          this.toast.success('Ферма успешно запущена!')
+        } else{
+          this.toast.error(res.data.status_text)
+        }
+      });
     }
   },
 };
@@ -235,5 +226,11 @@ export default {
 <style lang="scss" scoped>
   .main-action--amber{
     width: 100%;
+  }
+  .text-red-used{
+    color: rgb(244 63 94 / var(--tw-text-opacity));
+  }
+  .text-green-used{
+    color:#0bff15;
   }
 </style>
