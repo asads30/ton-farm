@@ -160,6 +160,7 @@ export default {
         if(res.data.status === 200){
           this.$emit("close");
           this.toast.success('Успешно куплено!');
+          this.$router.push('/farm')
           this.getShopData();
         } else{
           this.toast.error(res.data.status_text)

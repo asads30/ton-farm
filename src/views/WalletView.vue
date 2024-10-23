@@ -21,7 +21,7 @@
       </div>
     </div>
     <div class="grid gap-4 py-4">
-      <button class="menu-item p-3">
+      <button class="menu-item p-3" @click="open" v-if="!userFriendlyAddress">
         <div class="flex items-center">
           <img class="mr-3 w-7" src="@/assets/images/icons/wallet.png" />
           <p class="text-sm text-white">
@@ -29,7 +29,7 @@
           </p>
         </div>
       </button>
-      <div class="linear-border--slate relative p-3">
+      <div class="linear-border--slate relative p-3" v-if="userFriendlyAddress">
         <div class="mb-3 flex items-center">
           <img class="mr-3 w-7" src="@/assets/images/icons/wallet.png" />
           <p class="mr-auto text-sm text-white">
@@ -42,49 +42,22 @@
             {{ $t("connected") }}
           </p>
         </div>
-        <TonConnectButton/>
         <button class="menu-item rounded-xl bg-cyan-400/20 p-2">
           <div class="flex items-center px-3">
-            <p class="mr-auto text-xs text-white">EQDo...IetE</p>
-            <p class="p-1 text-xs text-white">{{ $t("copy") }}</p>
+            <p class="mr-auto text-xs text-white">{{ userFriendlyAddress }}</p>
           </div>
         </button>
 
         <div class="py-1"></div>
 
-        <button class="menu-item rounded-xl p-2">
+        <button class="menu-item rounded-xl p-2" v-if="userFriendlyAddress" @click="disconnectWallet">
           <div class="flex justify-center">
             <p class="text-xs text-white">{{ $t("unlink") }}</p>
           </div>
         </button>
       </div>
 
-      <div class="py-5">
-        <div class="text-sm font-light text-center">{{ $t("add-ton-crypto-transfer") }}</div>
-        <div class="relative mt-5 pt-2">
-          <div class="linear-border--slate p-3">
-            <div class="linear-border position-center-x -top-2 bg-gray-950">
-              <span class="font-sf text-xs text-blue-500">{{ $t("wallet-address") }}</span>
-            </div>
-            <div class="relative break-words pb-8">
-              <div class="pr-10 text-xs text-blue-500 absolute w-11/12">
-                0x790b44b9863599568a5b154e1a66de67f1bfd6d8f363ab03bb2b1e4e3350c313
-              </div>
-            </div>
-            <button class="absolute right-4 top-5 p-1" @click="copyLink">
-              <img class="w-4" src="@/assets/images/icons/copy.png" />
-            </button>
-            <div class="h-[1px] w-full bg-slate-800 my-2"></div>
-            <div class="flex items-center text-blue-500 text-sm">
-              <p>{{ $t("network") }}:</p>
-              <p class="ml-auto">TON</p>
-            </div>
-          </div>
-        </div>
-        <div class="text-center text-white/80 text-xs font-light p-1">
-          {{ $t("copy-wallet-address") }}
-        </div>
-      </div>
+      
       <router-link to="/wallet/add" class="menu-item p-3">
         <div class="flex items-center">
           <img class="mr-3 w-7" src="@/assets/images/icons/plus-circle.png" />
@@ -117,13 +90,15 @@
 
 <script>
 import Bottombar from "@/components/Bottombar.vue";
-import { TonConnectButton } from '@townsquarelabs/ui-vue';
+import { useTonWallet } from '@townsquarelabs/ui-vue';
+import { useTonAddress } from '@townsquarelabs/ui-vue';
+import { useTonConnectModal } from '@townsquarelabs/ui-vue';
+import { useTonConnectUI } from '@townsquarelabs/ui-vue';
 
 export default {
   name: "WalletView",
   components: {
-    Bottombar,
-    TonConnectButton
+    Bottombar
   },
   mounted() {
     let tg = window?.Telegram?.WebApp;
@@ -140,7 +115,37 @@ export default {
           console.error("Ошибка копирования ссылки: ", err);
         }
       );
-    },
+    }
   },
+  setup() {
+    const userFriendlyAddress = useTonAddress();
+    const { open } = useTonConnectModal();
+    const { tonConnectUI } = useTonConnectUI();
+    const disconnectWallet = async () => {
+      try {
+        await tonConnectUI.disconnect();
+        console.log("Wallet disconnected");
+      } catch (error) {
+        console.error("Failed to disconnect wallet", error);
+      }
+    };
+    return {
+      userFriendlyAddress,
+      open,
+      disconnectWallet
+    }
+  }
 };
 </script>
+
+<style lang="scss">
+  #ton-connect-button{
+    width: 100% !important;
+    div{
+      width: 100% !important;
+      button{
+        width: 100% !important;
+      }
+    }
+  }
+</style>

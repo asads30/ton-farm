@@ -51,7 +51,7 @@
             </div>
           </div>
           <div class="pt-3">
-            <button @click="closeModal" class="main-action--green">
+            <button @click="goShop" class="main-action--green">
               <div class="mx-auto flex items-center py-1 text-sm">
                 <p class="pr-2 text-white">{{ $t('home.claim') }}</p>
               </div>
@@ -79,6 +79,9 @@
     methods: {
       closeModal() {
         this.$emit("close");
+      },
+      goShop(){
+        this.$router.push('/farm')
       }
     }
   };

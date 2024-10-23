@@ -6,6 +6,7 @@ import FarmView from '@/views/FarmView.vue'
 import InfoView from '@/views/InfoView.vue'
 import LeaderboardView from '@/views/LeaderboardView.vue'
 import PowerStationView from '@/views/PowerStationView.vue'
+import RoadmapView from '@/views/RoadmapView.vue'
 import SpinView from '@/views/SpinView.vue'
 import StoreView from '@/views/StoreView.vue'
 import WalletHistoryView from '@/views/WalletHistoryView.vue'
@@ -98,6 +99,11 @@ const routes = [
     path: '/wallet/send',
     name: 'wallet-send',
     component: WalletSendView
+  },
+  {
+    path: '/roadmap',
+    name: 'roadmap',
+    component: RoadmapView
   },
 ]
 

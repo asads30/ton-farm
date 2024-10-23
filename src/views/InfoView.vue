@@ -27,7 +27,7 @@
             <img class="mr-2 w-2" src="@/assets/images/icons/chevron-right.png" />
           </div>
         </router-link>
-        <button class="menu-item mt-2 p-3">
+        <router-link to="/roadmap" class="menu-item mt-2 p-3">
           <div class="flex items-center">
             <img class="mr-3 w-7" src="@/assets/images/icons/road-map.png" />
             <p class="mr-auto text-sm text-white">
@@ -35,7 +35,7 @@
             </p>
             <img class="mr-2 w-2" src="@/assets/images/icons/chevron-right.png" />
           </div>
-        </button>
+        </router-link>
       </div>
       <!-- <div class="linear-border--slate relative p-3">
         <div class="pb-3 text-center text-xs">

@@ -61,9 +61,6 @@
         </div>
     </div>
     <div class="linear-border--slate relative mt-10 w-full p-4">
-        <router-link class="w-full rounded-xl border border-cyan-400/50 block" to="/bill-history">
-            <p class="p-3 text-sm text-white">{{ $t("view-payments-history") }}</p>
-        </router-link>
         <div class="my-4 flex items-center gap-5 mb-8">
             <div class="linear-border--slate relative p-3 min-w-32 text-left">
                 <p class="text-xs">{{ $t("building-level") }}</p>
