@@ -7,12 +7,18 @@ import { languages } from '@/i18n/index'
 import "@/assets/css/app.css";
 import Toast from "vue-toastification";
 import "vue-toastification/dist/index.css";
-import { TonConnectUIPlugin } from '@townsquarelabs/ui-vue'
+import { TonConnectUIPlugin } from '@townsquarelabs/ui-vue';
 
 const messages = Object.assign(languages)
 
 const options = {
-    // You can set your default options here
+    position: "top-right",
+    timeout: 2000,
+    closeOnClick: false,
+    pauseOnHover: false,
+    hideProgressBar: true,
+    closeButton: false,
+    icon: false
 };
 
 const i18n = createI18n({

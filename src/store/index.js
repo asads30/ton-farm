@@ -8,7 +8,8 @@ export default createStore({
     home: null,
     powerStation: null,
     workshop: null,
-    farm: null
+    farm: null,
+    referrals: null
   },
   getters: {
     getUser(state){
@@ -31,6 +32,9 @@ export default createStore({
     },
     getFarm(state){
       return state.farm
+    },
+    getReferrals(state){
+      return state.referrals
     }
   },
   mutations: {
@@ -54,6 +58,9 @@ export default createStore({
     },
     setFarm(state, farm){
       state.farm = farm
+    },
+    setReferrals(state, referrals){
+      state.referrals = referrals
     }
   }
 })

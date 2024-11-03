@@ -53,6 +53,7 @@ import Farm from "@/components/Boost/Farm/Index.vue";
 import PowerStation from "@/components/Boost/PowerStation/Index.vue";
 import WorkShop from "@/components/Boost/WorkShop/Index.vue";
 import Modal from "@/components/Boost/Modal.vue";
+import { mapGetters } from "vuex";
 
 export default {
   name: "BoostView",
@@ -68,6 +69,11 @@ export default {
     PowerStation,
     WorkShop
   },
+  computed: {
+    ...mapGetters([
+        'getInitData'
+    ]),
+  },
   mounted() {
     let tg = window?.Telegram?.WebApp;
     tg.BackButton.hide();
@@ -77,6 +83,9 @@ export default {
       this.active = 3;
     } else{
       this.active = 1
+    }
+    if(!this.getInitData){
+      this.$store.commit('setInitData', tg?.initData)
     }
   },
   methods: {

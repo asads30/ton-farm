@@ -28,12 +28,22 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
+
 export default {
   name: "WalletSendView",
   mounted() {
     let tg = window?.Telegram?.WebApp;
     tg.BackButton.show();
     tg.onEvent("backButtonClicked", this.goBack);
+    if(!this.getInitData){
+      this.$store.commit('setInitData', tg?.initData)
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'getInitData'
+    ])
   },
   methods: {
     goBack() {

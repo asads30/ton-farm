@@ -69,13 +69,23 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
+
 export default {
   name: 'BillHistoryView',
+  computed: {
+    ...mapGetters([
+      'getInitData'
+    ]),
+  },
   mounted() {
     let tg = window?.Telegram?.WebApp;
     tg.expand();
     tg.BackButton.show();
     tg.onEvent("backButtonClicked", this.goBack);
+    if(!this.getInitData){
+      this.$store.commit('setInitData', tg?.initData)
+    }
   },
   methods: {
     goBack(){

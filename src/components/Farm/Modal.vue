@@ -41,7 +41,7 @@
         </div>
       </div>
       <div class="pt-6">
-        <button @click="repair" class="main-action--green">
+        <button @click="repair" class="main-action--green" v-if="item?.asic?.resource?.repair_cost > 0">
           <div class="mx-auto flex items-center py-1 text-sm">
             <p class="pr-2 text-white">
               {{ $t("repair") }}
@@ -64,8 +64,8 @@
 
 <script>
 import axios from 'axios'
-import { mapGetters } from "vuex";
 import { useToast } from 'vue-toastification'
+import { mapGetters } from "vuex";
 
 export default {
   name: "FarmModal",
@@ -74,14 +74,14 @@ export default {
       toast: useToast()
     }
   },
+  computed: {
+    ...mapGetters([
+        'getInitData'
+    ]),
+  },
   props: {
     show: Boolean,
     item: Object,
-  },
-  computed: {
-    ...mapGetters([
-      "getInitData"
-    ])
   },
   methods: {
     closeModal() {
@@ -89,7 +89,7 @@ export default {
     },
     deactivate(){
       const data = {
-        initData: this.getInitData ? this.getInitData : "user=%7B%22id%22%3A5850887936%2C%22first_name%22%3A%22Asadbek%22%2C%22last_name%22%3A%22Ibragimov%22%2C%22username%22%3A%22webmonster_uz%22%2C%22language_code%22%3A%22ru%22%2C%22allows_write_to_pm%22%3Atrue%7D&chat_instance=-1442677966141426206&chat_type=group&auth_date=1727613930&hash=08188303ad38ea8c0213a6df5da80738a9395e33ff55438820988a30274542f4",
+        initData: this.getInitData,
         t: "asic",
         a: "deactivate",
         asic_id: this.item?.asic?.id
@@ -104,7 +104,7 @@ export default {
     },
     getFarmData(){
       let data = {
-        initData: this.getInitData ? this.getInitData : "user=%7B%22id%22%3A5850887936%2C%22first_name%22%3A%22Asadbek%22%2C%22last_name%22%3A%22Ibragimov%22%2C%22username%22%3A%22webmonster_uz%22%2C%22language_code%22%3A%22ru%22%2C%22allows_write_to_pm%22%3Atrue%7D&chat_instance=-1442677966141426206&chat_type=group&auth_date=1727613930&hash=08188303ad38ea8c0213a6df5da80738a9395e33ff55438820988a30274542f4",
+        initData: this.getInitData,
         t: "farm",
         a: "get",
       };
@@ -116,7 +116,7 @@ export default {
     },
     repair(){
       let data = {
-        initData: this.getInitData ? this.getInitData : "user=%7B%22id%22%3A5850887936%2C%22first_name%22%3A%22Asadbek%22%2C%22last_name%22%3A%22Ibragimov%22%2C%22username%22%3A%22webmonster_uz%22%2C%22language_code%22%3A%22ru%22%2C%22allows_write_to_pm%22%3Atrue%7D&chat_instance=-1442677966141426206&chat_type=group&auth_date=1727613930&hash=08188303ad38ea8c0213a6df5da80738a9395e33ff55438820988a30274542f4",
+        initData: this.getInitData,
         t: "asic",
         a: "repair",
         asic_id: this.item?.asic?.id
@@ -124,8 +124,9 @@ export default {
       axios.post("https://tonminefarm.com/request", data).then((res) => {
         if (res.data.status === 200) {
           this.getFarmData();
-          this.toast.success('Починили');
+          this.toast.success('Отправлен в ремонт');
           this.$emit("close");
+          this.$router.push({ name: "workshop", query: { id: res?.data?.asic?.workstation_slot_id } });
         } else{
           this.toast.error(res.data.status_text)
         }

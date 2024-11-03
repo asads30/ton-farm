@@ -7,6 +7,7 @@
     "build": "vue-cli-service build"
   },
   "dependencies": {
+    "@tonconnect/sdk": "^3.0.5",
     "@townsquarelabs/ui-vue": "^2.0.11-beta.0",
     "vue": "^3.2.13",
     "vue-router": "^4.0.3",

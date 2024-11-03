@@ -97,7 +97,7 @@
                 <p class="text-xs">{{ $t("building-grade") }}</p>
                 <p class="text-lg">{{ getFarm?.grade?.level }}</p>
             </div>
-            <div :class="getFarm?.max_level?.level == getFarm?.level?.level ? 'ml-auto grid min-w-32 flex-1' : 'ml-auto grid min-w-32 flex-1 disable'">
+            <div :class="getFarm?.max_level?.level == getFarm?.level?.level && getFarm?.grade?.level !== getFarm?.max_up?.level  ? 'ml-auto grid min-w-32 flex-1' : 'ml-auto grid min-w-32 flex-1 disable'">
                 <button class="main-action--green mb-1" @click="showModalHandle(0)">
                     <div class="mx-auto flex items-center text-xs">
                         <p class="pr-2 text-white">{{ $t("level-up") }}</p>
@@ -160,8 +160,8 @@ export default {
     },
     computed: {
         ...mapGetters([
-            'getFarm',
-            'getInitData'
+            'getInitData',
+            'getFarm'
         ]),
         formattedTime() {
             const minutes = Math.floor(this.remainingTime / 60);
@@ -188,7 +188,7 @@ export default {
     methods: {
         getFarmData(){
             let data = {
-                initData: this.getInitData ? this.getInitData : "user=%7B%22id%22%3A5850887936%2C%22first_name%22%3A%22Asadbek%22%2C%22last_name%22%3A%22Ibragimov%22%2C%22username%22%3A%22webmonster_uz%22%2C%22language_code%22%3A%22ru%22%2C%22allows_write_to_pm%22%3Atrue%7D&chat_instance=-1442677966141426206&chat_type=group&auth_date=1727613930&hash=08188303ad38ea8c0213a6df5da80738a9395e33ff55438820988a30274542f4",
+                initData: this.getInitData,
                 t: "farm",
                 a: "get",
             };
@@ -225,7 +225,7 @@ export default {
         },
         boost(){
             let data = {
-                initData: this.getInitData ? this.getInitData : "user=%7B%22id%22%3A5850887936%2C%22first_name%22%3A%22Asadbek%22%2C%22last_name%22%3A%22Ibragimov%22%2C%22username%22%3A%22webmonster_uz%22%2C%22language_code%22%3A%22ru%22%2C%22allows_write_to_pm%22%3Atrue%7D&chat_instance=-1442677966141426206&chat_type=group&auth_date=1727613930&hash=08188303ad38ea8c0213a6df5da80738a9395e33ff55438820988a30274542f4",
+                initData: this.getInitData,
                 t: "farm",
                 a: "boost_level"
             };
@@ -246,7 +246,7 @@ export default {
         goAction(){
             if(this.variant == 1){
                 let data = {
-                    initData: this.getInitData ? this.getInitData : "user=%7B%22id%22%3A5850887936%2C%22first_name%22%3A%22Asadbek%22%2C%22last_name%22%3A%22Ibragimov%22%2C%22username%22%3A%22webmonster_uz%22%2C%22language_code%22%3A%22ru%22%2C%22allows_write_to_pm%22%3Atrue%7D&chat_instance=-1442677966141426206&chat_type=group&auth_date=1727613930&hash=08188303ad38ea8c0213a6df5da80738a9395e33ff55438820988a30274542f4",
+                    initData: this.getInitData,
                     t: "farm",
                     a: "level_up"
                 };
@@ -266,7 +266,7 @@ export default {
                 })
             } else{
                 let data = {
-                    initData: this.getInitData ? this.getInitData : "user=%7B%22id%22%3A5850887936%2C%22first_name%22%3A%22Asadbek%22%2C%22last_name%22%3A%22Ibragimov%22%2C%22username%22%3A%22webmonster_uz%22%2C%22language_code%22%3A%22ru%22%2C%22allows_write_to_pm%22%3Atrue%7D&chat_instance=-1442677966141426206&chat_type=group&auth_date=1727613930&hash=08188303ad38ea8c0213a6df5da80738a9395e33ff55438820988a30274542f4",
+                    initData: this.getInitData,
                     t: "farm",
                     a: "grade_up"
                 };

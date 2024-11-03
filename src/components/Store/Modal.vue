@@ -128,7 +128,8 @@ export default {
       utils,
       toast: useToast(),
       isVisible: false,
-      win: null
+      win: null,
+      initData: null
     };
   },
   components: {
@@ -136,8 +137,8 @@ export default {
   },
   computed: {
     ...mapGetters([
-      "getInitData"
-    ])
+        'getInitData'
+    ]),
   },
   props: {
     show: Boolean,
@@ -150,7 +151,7 @@ export default {
     },
     buyItem(type, level){
       const data = {
-        initData: this.getInitData ? this.getInitData : "user=%7B%22id%22%3A5850887936%2C%22first_name%22%3A%22Asadbek%22%2C%22last_name%22%3A%22Ibragimov%22%2C%22username%22%3A%22webmonster_uz%22%2C%22language_code%22%3A%22ru%22%2C%22allows_write_to_pm%22%3Atrue%7D&chat_instance=-1442677966141426206&chat_type=group&auth_date=1727613930&hash=08188303ad38ea8c0213a6df5da80738a9395e33ff55438820988a30274542f4",
+        initData: this.getInitData,
         t: "shop",
         a: "buy",
         item: type,
@@ -158,10 +159,33 @@ export default {
       }
       axios.post('https://tonminefarm.com/request', data).then(res => {
         if(res.data.status === 200){
+          let asic_id = res.data.asic_id
           this.$emit("close");
-          this.toast.success('Успешно куплено!');
-          this.$router.push('/farm')
-          this.getShopData();
+          if(type == 'asic'){
+            try {
+              const data = {
+                initData: this.getInitData,
+                t: "asic",
+                a: "activate",
+                asic_id: asic_id
+              }
+              axios.post('https://tonminefarm.com/request', data).then(res => {
+                if(res.data.status == 200){
+                  this.toast.success('Успешно активировано!');
+                  this.$router.push('/farm')
+                  this.getShopData();
+                } else{
+                  this.toast.error(res.data.status_text)
+                }
+              })
+            } catch (error) {
+              console.log(error)
+            }
+          } else{
+            this.toast.success('Успешно активировано!');
+            this.$router.push('/farm')
+            this.getShopData();
+          }
         } else{
           this.toast.error(res.data.status_text)
         }
@@ -169,7 +193,7 @@ export default {
     },
     buyLootbox(item){
       const data = {
-        initData: this.getInitData ? this.getInitData : "user=%7B%22id%22%3A5850887936%2C%22first_name%22%3A%22Asadbek%22%2C%22last_name%22%3A%22Ibragimov%22%2C%22username%22%3A%22webmonster_uz%22%2C%22language_code%22%3A%22ru%22%2C%22allows_write_to_pm%22%3Atrue%7D&chat_instance=-1442677966141426206&chat_type=group&auth_date=1727613930&hash=08188303ad38ea8c0213a6df5da80738a9395e33ff55438820988a30274542f4",
+        initData: this.getInitData,
         t: "shop",
         a: "buy",
         level: item?.level,
@@ -194,7 +218,7 @@ export default {
     },
     getShopData(){
       let data = {
-        initData: this.getInitData ? this.getInitData : "user=%7B%22id%22%3A5850887936%2C%22first_name%22%3A%22Asadbek%22%2C%22last_name%22%3A%22Ibragimov%22%2C%22username%22%3A%22webmonster_uz%22%2C%22language_code%22%3A%22ru%22%2C%22allows_write_to_pm%22%3Atrue%7D&chat_instance=-1442677966141426206&chat_type=group&auth_date=1727613930&hash=08188303ad38ea8c0213a6df5da80738a9395e33ff55438820988a30274542f4",
+        initData: this.getInitData,
         t: "shop",
         a: "get",
       };

@@ -5,23 +5,9 @@
         {{ $t("wallet") }}
       </h2>
     </div>
-    <div class="profile-card">
-      <div class="main-circle-gradient h-11 w-11 p-1">
-        <img class="rounded-[50%]" src="@/assets/images/avatars/01.png" />
-      </div>
-      <div class="pl-2 text-sm">
-        <p class="text-sm text-white">Nick Jay</p>
-        <p class="font-patsy text-amber-400">{{ $t("level") }} 8</p>
-      </div>
-      <div class="ml-auto mr-10">
-        <div class="flex items-center font-geist-mono text-blue-400">
-          <p>28,5</p>
-          <span class="pl-2 text-xs">TON</span>
-        </div>
-      </div>
-    </div>
+    <ProfileCard />
     <div class="grid gap-4 py-4">
-      <button class="menu-item p-3" @click="open" v-if="!userFriendlyAddress">
+      <button class="menu-item p-3">
         <div class="flex items-center">
           <img class="mr-3 w-7" src="@/assets/images/icons/wallet.png" />
           <p class="text-sm text-white">
@@ -90,19 +76,44 @@
 
 <script>
 import Bottombar from "@/components/Bottombar.vue";
-import { useTonWallet } from '@townsquarelabs/ui-vue';
+import ProfileCard from "@/components/ProfileCard.vue";
 import { useTonAddress } from '@townsquarelabs/ui-vue';
 import { useTonConnectModal } from '@townsquarelabs/ui-vue';
 import { useTonConnectUI } from '@townsquarelabs/ui-vue';
+import axios from 'axios'
+import {mapGetters} from 'vuex'
 
 export default {
   name: "WalletView",
+  data() {
+    return {
+      address: useTonAddress(),
+    }
+  },
   components: {
-    Bottombar
+    Bottombar,
+    ProfileCard
+  },
+  computed: {
+    ...mapGetters([
+      'getInitData'
+    ])
   },
   mounted() {
     let tg = window?.Telegram?.WebApp;
     tg.BackButton.hide();
+    if(this.address){
+      const data = {
+        initData: this.getInitData,
+        t: "account",
+        a: "set_address",
+        address: this.address
+      }
+      axios.post('https://tonminefarm.com/request', data)
+    }
+    if(!this.getInitData){
+      this.$store.commit('setInitData', tg?.initData)
+    }
   },
   methods: {
     copyLink() {

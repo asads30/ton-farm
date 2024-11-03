@@ -122,7 +122,7 @@
                 <div class="bg-shape-radial--fuchsia h-24 w-64 blur-3xl"></div>
               </div>
               <div class="grid content-center">
-                <div class="rounded-lg border border-dashed border-cyan-400/65">
+                <div class="rounded-lg">
                   <div class="p-2 text-center">
                     <div class="font-geist-mono text-2xl font-semibold text-cyan-400">{{ lootbox?.cost }} TON</div>
                   </div>
@@ -262,7 +262,7 @@
                       </p>
                     </div>
                   </div>
-                  <button @click="activateAsic(item?.id, 0)" class="main-action--amber mt-4" v-if="item?.status == 0">
+                  <button @click="activateAsic(item?.id, 0)" class="main-action--green mt-4" v-if="item?.status == 0">
                     <div class="mx-auto flex items-center text-sm">
                       <p class="text-white">{{ $t("activate") }}</p>
                     </div>
@@ -314,8 +314,8 @@ export default {
   },
   computed: {
     ...mapGetters([
-      "getShop",
-      "getInitData"
+      'getShop',
+      'getInitData'
     ])
   },
   components: {
@@ -330,6 +330,9 @@ export default {
     this.getShopData()
     if (this.$route?.query?.type == "other") {
       this.active = 3;
+    }
+    if(!this.getInitData){
+      this.$store.commit('setInitData', tg?.initData)
     }
   },
   methods: {
@@ -362,7 +365,7 @@ export default {
     },
     getShopData(){
       let data = {
-        initData: this.getInitData ? this.getInitData : "user=%7B%22id%22%3A5850887936%2C%22first_name%22%3A%22Asadbek%22%2C%22last_name%22%3A%22Ibragimov%22%2C%22username%22%3A%22webmonster_uz%22%2C%22language_code%22%3A%22ru%22%2C%22allows_write_to_pm%22%3Atrue%7D&chat_instance=-1442677966141426206&chat_type=group&auth_date=1727613930&hash=08188303ad38ea8c0213a6df5da80738a9395e33ff55438820988a30274542f4",
+        initData: this.getInitData,
         t: "shop",
         a: "get",
       };
@@ -375,7 +378,7 @@ export default {
     activateAsic(id, status){
       if(status === 1){
         var data = {
-          initData: this.getInitData ? this.getInitData : "user=%7B%22id%22%3A5850887936%2C%22first_name%22%3A%22Asadbek%22%2C%22last_name%22%3A%22Ibragimov%22%2C%22username%22%3A%22webmonster_uz%22%2C%22language_code%22%3A%22ru%22%2C%22allows_write_to_pm%22%3Atrue%7D&chat_instance=-1442677966141426206&chat_type=group&auth_date=1727613930&hash=08188303ad38ea8c0213a6df5da80738a9395e33ff55438820988a30274542f4",
+          initData: this.getInitData,
           t: "asic",
           a: "deactivate",
           asic_id: id
@@ -383,7 +386,7 @@ export default {
       }
       if(status === 0){
         var data = {
-          initData: this.getInitData ? this.getInitData : "user=%7B%22id%22%3A5850887936%2C%22first_name%22%3A%22Asadbek%22%2C%22last_name%22%3A%22Ibragimov%22%2C%22username%22%3A%22webmonster_uz%22%2C%22language_code%22%3A%22ru%22%2C%22allows_write_to_pm%22%3Atrue%7D&chat_instance=-1442677966141426206&chat_type=group&auth_date=1727613930&hash=08188303ad38ea8c0213a6df5da80738a9395e33ff55438820988a30274542f4",
+          initData: this.getInitData,
           t: "asic",
           a: "activate",
           asic_id: id

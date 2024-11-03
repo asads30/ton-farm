@@ -3,23 +3,7 @@
     <main class="!p-0 home">
       <div class="relative flex flex-col h-full">
         <div class="p-1">
-          <div class="profile-card">
-            <div class="main-circle-gradient h-11 w-11 p-1">
-              <img class="rounded-[50%]" src="@/assets/images/avatars/01.png" />
-            </div>
-            <div class="pl-2 text-sm">
-              <p class="text-sm text-white">{{ info?.account?.first_name }}</p>
-              <p class="font-patsy text-amber-400">
-                {{ $t("level") }} {{ info?.account?.level }}
-              </p>
-            </div>
-            <div class="ml-auto mr-10">
-              <div class="flex items-center font-geist-mono text-blue-400">
-                <p>{{ formatBalance(info?.account?.balance) }}</p>
-                <span class="pl-2 text-xs">TON</span>
-              </div>
-            </div>
-          </div>
+          <ProfileCard />
           <div class="grid grid-cols-2 gap-2 py-2">
             <div class="main-action--cyan">
               <img class="w-8" src="@/assets/images/icons/ton-hour.png" />
@@ -57,7 +41,12 @@
             </div>
           </router-link>
           <div class="home-center">
-            <img src="@/assets/images/main3.png" alt="">
+            <div class="home-building">
+              <img src="@/assets/images/building.png" alt="">
+            </div>
+            <div class="home-coming">
+              <img src="@/assets/images/cooming-soon.png" alt="">
+            </div>
           </div>
           <router-link to="/farm" class="home-item">
             <img :src="info?.farm?.grade?.image" alt="">
@@ -86,7 +75,9 @@
 import axios from "axios";
 import Bottombar from "@/components/Bottombar.vue";
 import Modal from "@/components/Home/Modal.vue";
+import ProfileCard from "@/components/ProfileCard.vue";
 import confetti from 'canvas-confetti';
+import { useToast } from 'vue-toastification';
 
 export default {
   name: "HomeView",
@@ -96,17 +87,20 @@ export default {
       isLoading: true,
       item: null,
       showModal: false,
+      toast: useToast()
     };
   },
   components: {
     Bottombar,
-    Modal
+    Modal,
+    ProfileCard
   },
   mounted() {
     let tg = window?.Telegram?.WebApp;
+    let user = tg?.initDataUnsafe;
     tg.BackButton.hide();
     tg.expand();
-    if(tg?.initData){
+    if(tg.initData){
       this.$store.commit('setInitData', tg.initData)
     } else{
       let initData = 'user=%7B%22id%22%3A5850887936%2C%22first_name%22%3A%22Asadbek%22%2C%22last_name%22%3A%22Ibragimov%22%2C%22username%22%3A%22webmonster_uz%22%2C%22language_code%22%3A%22ru%22%2C%22allows_write_to_pm%22%3Atrue%7D&chat_instance=-1442677966141426206&chat_type=group&auth_date=1727613930&hash=08188303ad38ea8c0213a6df5da80738a9395e33ff55438820988a30274542f4'
@@ -116,6 +110,7 @@ export default {
       initData: tg.initData ? tg.initData : "user=%7B%22id%22%3A5850887936%2C%22first_name%22%3A%22Asadbek%22%2C%22last_name%22%3A%22Ibragimov%22%2C%22username%22%3A%22webmonster_uz%22%2C%22language_code%22%3A%22ru%22%2C%22allows_write_to_pm%22%3Atrue%7D&chat_instance=-1442677966141426206&chat_type=group&auth_date=1727613930&hash=08188303ad38ea8c0213a6df5da80738a9395e33ff55438820988a30274542f4",
       t: "home",
       a: "get",
+      ref: user?.start_param ? user?.start_param : 0,
     };
     try {
       axios.post("https://tonminefarm.com/request", data).then((res) => {
@@ -141,9 +136,6 @@ export default {
     }
   },
   methods: {
-    formatBalance(value) {
-      return Number(value).toFixed(2);
-    },
     closeModal(){
       this.showModal = false
       this.item = null
@@ -199,11 +191,21 @@ export default {
     width: 100%;
     display: flex;
     justify-content: center;
+    flex-direction: column;
+    align-items: center;
     margin-top: -10px;
-    img{
+    position: relative;
+    .home-building img{
       width: 130px;
-      height: 144px;
+      height: auto;
       filter: grayscale(1);
+    }
+    .home-coming{
+      position: absolute;
+      bottom: 0;
+      img{
+        width: 110px;
+      }
     }
   }
 }

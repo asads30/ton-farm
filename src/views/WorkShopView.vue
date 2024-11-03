@@ -45,13 +45,15 @@
       </div>
     </div>
 
-    <button @click="goMoreBoost" class="main-action--green">
-      <div class="mx-auto flex items-center text-sm">
-        <p class="pr-2 text-white">
-          {{ $t("boost.title") }}
-        </p>
-      </div>
-    </button>
+    <div class="button-wrap">
+      <button @click="goMoreBoost" class="main-action--green">
+        <div class="mx-auto flex items-center text-sm">
+          <p class="pr-2 text-white">
+            {{ $t("boost.title") }}
+          </p>
+        </div>
+      </button>
+    </div>
 
     <div class="grid grid-cols-3 gap-1 py-2">
       <article
@@ -134,6 +136,7 @@ export default {
       ],
       showModal: false,
       item: null,
+      initData: null
     };
   },
   computed: {
@@ -155,6 +158,19 @@ export default {
     if(!this.getPowerStation){
       this.getWorkShopData()
     }
+    if(!this.getInitData){
+      this.$store.commit('setInitData', tg?.initData)
+    }
+    if (this.$route?.query?.id) {
+      try {
+        this.getWorkShopData()
+      } catch (error) {
+        console.log(error)
+      }
+      setTimeout(() => {
+        this.findAsicById(this.$route?.query?.id);
+      }, 1000);
+    }
   },
   methods: {
     goHome() {
@@ -174,7 +190,7 @@ export default {
     },
     getWorkShopData(){
       let data = {
-        initData: this.getInitData ? this.getInitData : "user=%7B%22id%22%3A5850887936%2C%22first_name%22%3A%22Asadbek%22%2C%22last_name%22%3A%22Ibragimov%22%2C%22username%22%3A%22webmonster_uz%22%2C%22language_code%22%3A%22ru%22%2C%22allows_write_to_pm%22%3Atrue%7D&chat_instance=-1442677966141426206&chat_type=group&auth_date=1727613930&hash=08188303ad38ea8c0213a6df5da80738a9395e33ff55438820988a30274542f4",
+        initData: this.getInitData,
         t: "workstation",
         a: "get",
       };
@@ -194,7 +210,19 @@ export default {
       } else{
         this.$router.push('/farm')
       }
+    },
+    findAsicById(id){
+      let result = this.getWorkShop?.my_slots.find(item => item.id == id);
+      this.item = result.asic
+      this.showModal = true;
     }
   },
 };
 </script>
+
+<style lang="scss" scoped>
+  .button-wrap{
+    width: 100%;
+    padding: 0 10px;
+  }
+</style>

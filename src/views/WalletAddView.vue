@@ -5,21 +5,7 @@
         {{ $t("wallet") }}
       </h2>
     </div>
-    <div class="profile-card">
-      <div class="main-circle-gradient h-11 w-11 p-1">
-        <img class="rounded-[50%]" src="@/assets/images/avatars/01.png" />
-      </div>
-      <div class="pl-2 text-sm">
-        <p class="text-sm text-white">Nick Jay</p>
-        <p class="font-patsy text-amber-400">{{ $t("level") }} 8</p>
-      </div>
-      <div class="ml-auto mr-10">
-        <div class="flex items-center font-geist-mono text-blue-400">
-          <p>28,5</p>
-          <span class="pl-2 text-xs">TON</span>
-        </div>
-      </div>
-    </div>
+    <ProfileCard />
     <div class="py-4">
       <div class="text-sm font-light text-center">{{ $t("add-ton-crypto-transfer") }}</div>
       <div class="relative mt-5 pt-2">
@@ -46,26 +32,99 @@
         {{ $t("copy-wallet-address") }}
       </div>
     </div>
-    <div class="py-4">
-      <div class="text-md font-light text-center">Пополнить TON через TonConnect</div>
-      <input type="text" placeholder="Введите сумму">
-      <button>Пополнить</button>
+    <div class="wallet-add">
+      <div class="text-md font-light text-center wallet-add-title">Пополнить TON через TonConnect</div>
+      <input type="text" placeholder="Введите сумму" class="wallet-add-input">
+      <button class="wallet-add-btn" @click="sendTransaction">Пополнить</button>
     </div>
   </main>
 </template>
 
 <script>
+import ProfileCard from '@/components/ProfileCard.vue';
+import { useTonConnectUI } from '@townsquarelabs/ui-vue';
+import { mapGetters } from 'vuex';
+
 export default {
   name: "WalletAddView",
+  components: {
+    ProfileCard
+  },
   mounted() {
     let tg = window?.Telegram?.WebApp;
     tg.BackButton.show();
     tg.onEvent("backButtonClicked", this.goBack);
+    if(!this.getInitData){
+      this.$store.commit('setInitData', tg?.initData)
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'getInitData'
+    ])
   },
   methods: {
     goBack() {
       this.$router.push("/wallet");
     },
   },
+  setup(){
+    const {tonConnectUI, setOptions} = useTonConnectUI();
+    setOptions({ 
+      language: 'ru',
+      twaReturnUrl: "https://t.me/asadslavatestbot/myapp"
+    });
+    const myTransaction = {
+      validUntil: Math.floor(Date.now() / 1000) + 60,
+      messages: [
+        {
+          address: "0:6946c7a425ba3a32c25a7d764f5f5d713935ef668a77bb7c8c929f4b9dd5f9d0",
+          amount: "100000000"
+        }
+      ]
+    }
+    const sendTransaction = () => {
+      tonConnectUI.sendTransaction(myTransaction).then(res => {
+        console.log(res)
+      }).catch(err => {
+        console.log(err)
+      });
+    };
+
+    return { sendTransaction };
+  }
 };
 </script>
+
+<style lang="scss" scoped>
+  .wallet-add{
+    padding: 0 20px;
+    &-title{
+      margin-bottom: 20px;
+    }
+    &-input{
+      width: 100%;
+      height: 40px;
+      line-height: 40px;
+      border-radius: 5px;
+      padding: 0 15px;
+      font-size: 14px;
+      color: #000;
+      margin-bottom: 10px;
+      &:focus{
+        outline: 0;
+        border: 0;
+      }
+    }
+    &-btn{
+      width: 100%;
+      height: 40px;
+      background: rgb(59,130,246);
+      color: #fff;
+      text-align: center;
+      border-radius: 5px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+  }
+</style>

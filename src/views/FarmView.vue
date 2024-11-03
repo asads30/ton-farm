@@ -79,13 +79,15 @@
       </div>
     </router-link>
 
-    <button @click="goWorking" class="main-action--amber" v-else>
-      <div class="mx-auto flex items-center text-sm">
-        <p class="pr-2 text-white">
-          {{ $t("restart-mining") }}
-        </p>
-      </div>
-    </button>
+    <div class="button-wrap" v-else>
+      <button @click="goWorking" class="main-action--amber">
+        <div class="mx-auto flex items-center text-sm">
+          <p class="pr-2 text-white">
+            {{ $t("restart-mining") }}
+          </p>
+        </div>
+      </button>
+    </div>
 
     <div class="grid grid-cols-3 gap-1 py-2">
       <article
@@ -157,8 +159,8 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'getInitData',
-      'getFarm'
+      'getFarm',
+      'getInitData'
     ]),
     lockedSlots(){
       return Number(this.getFarm?.max_up?.slots) - Number(this.getFarm?.grade?.slots)
@@ -170,6 +172,9 @@ export default {
     tg.onEvent("backButtonClicked", this.goHome);
     if(!this.getPowerStation){
       this.getFarmData()
+    }
+    if(!this.getInitData){
+      this.$store.commit('setInitData', tg?.initData)
     }
   },
   methods: {
@@ -194,7 +199,7 @@ export default {
     },
     getFarmData(){
       let data = {
-        initData: this.getInitData ? this.getInitData : "user=%7B%22id%22%3A5850887936%2C%22first_name%22%3A%22Asadbek%22%2C%22last_name%22%3A%22Ibragimov%22%2C%22username%22%3A%22webmonster_uz%22%2C%22language_code%22%3A%22ru%22%2C%22allows_write_to_pm%22%3Atrue%7D&chat_instance=-1442677966141426206&chat_type=group&auth_date=1727613930&hash=08188303ad38ea8c0213a6df5da80738a9395e33ff55438820988a30274542f4",
+        initData: this.getInitData,
         t: "farm",
         a: "get",
       };
@@ -206,13 +211,13 @@ export default {
     },
     goWorking(){
       let data = {
-        initData: this.getInitData ? this.getInitData : "user=%7B%22id%22%3A5850887936%2C%22first_name%22%3A%22Asadbek%22%2C%22last_name%22%3A%22Ibragimov%22%2C%22username%22%3A%22webmonster_uz%22%2C%22language_code%22%3A%22ru%22%2C%22allows_write_to_pm%22%3Atrue%7D&chat_instance=-1442677966141426206&chat_type=group&auth_date=1727613930&hash=08188303ad38ea8c0213a6df5da80738a9395e33ff55438820988a30274542f4",
+        initData: this.getInitData,
         t: "farm",
         a: "start_mining",
       };
       axios.post("https://tonminefarm.com/request", data).then((res) => {
         if (res.data.status === 200) {
-          this.$store.commit('setFarm', res?.data?.data)
+          this.getFarmData()
           this.toast.success('Ферма успешно запущена!')
         } else{
           this.toast.error(res.data.status_text)
@@ -232,5 +237,9 @@ export default {
   }
   .text-green-used{
     color:#0bff15;
+  }
+  .button-wrap{
+    width: 100%;
+    padding: 0 10px;
   }
 </style>

@@ -28,7 +28,7 @@
 
 <script>
 import axios from "axios";
-import { mapGetters } from "vuex";
+import {mapGetters} from 'vuex';
 
 export default {
   name: 'ChooseLanguageView',
@@ -36,12 +36,15 @@ export default {
     let tg = window?.Telegram?.WebApp;
     tg.expand();
     tg.BackButton.show();
-    tg.onEvent("backButtonClicked", this.goHome);
+    tg.onEvent("backButtonClicked", this.goHome)
+    if(!this.getInitData){
+      this.$store.commit('setInitData', tg?.initData)
+    }
   },
   computed: {
     ...mapGetters([
-      "getInitData"
-    ])
+        'getInitData'
+    ]),
   },
   methods: {
     changeLanguage(){

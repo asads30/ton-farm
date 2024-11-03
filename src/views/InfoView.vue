@@ -16,8 +16,8 @@
             <img class="rounded-[50%]" src="@/assets/images/avatars/01.png" />
           </div>
           <div class="flex flex-1 pt-2 text-white">
-            <p class="mr-auto text-sm">Nick Jay</p>
-            <p class="font-patsy text-lg">{{ $t("level") }} 8</p>
+            <p class="mr-auto text-sm">{{ info?.first_name }}</p>
+            <p class="font-patsy text-lg">{{ $t("level") }} {{ info?.level }}</p>
           </div>
         </div>
         <router-link to="/leaderboard" class="menu-item mt-2 p-3">
@@ -86,15 +86,40 @@
 
 <script>
 import Bottombar from "@/components/Bottombar.vue";
+import axios from "axios";
+import { mapGetters } from "vuex";
 
 export default {
   name: "InfoView",
+  data() {
+    return {
+      info: null
+    }
+  },
   components: {
     Bottombar,
+  },
+  computed: {
+    ...mapGetters([
+      'getInitData'
+    ]),
   },
   mounted() {
     let tg = window?.Telegram?.WebApp;
     tg.BackButton.hide();
+    if(!this.getInitData){
+      this.$store.commit('setInitData', tg?.initData)
+    }
+    let data = {
+      initData: this.getInitData,
+      t: "account",
+      a: "get_me"
+    }
+    axios.post("https://tonminefarm.com/request", data).then(res => {
+      if(res.data.status == 200){
+        this.info = res.data.account
+      }
+    })
   },
 };
 </script>
