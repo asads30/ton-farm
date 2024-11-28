@@ -1,8 +1,8 @@
 <template>
     <div class="grid grid-cols-2 gap-5 py-4" v-if="getWorkShop">
         <div class="relative">
-            <h5 class="text-center font-patsy text-lg"><span class="text-white">{{ $t("level") }} {{ getWorkShop?.grade?.level }}</span>/{{ getWorkShop?.max_up?.level }}</h5>
-            <div class="w-40 mt-8">
+            <h5 class="text-center font-patsy text-lg"><span class="text-white">{{ $t("building-grade") }} {{ getWorkShop?.grade?.level }}</span>/{{ getWorkShop?.max_up?.level }}</h5>
+            <div class="cgrade-image">
                 <img class="w-full" :src="getWorkShop?.grade?.image" />
             </div>
             <div class="bg-shape-radial--fuchsia h-28 w-80 blur-3xl"></div>
@@ -12,21 +12,21 @@
                 <img class="h-7 w-7 flex-shrink-0 object-contain" src="@/assets/images/icons/ton-slate.png" />
                 <div class="pl-3">
                     <p class="text-xs">{{ $t("boost.workshop.price") }}</p>
-                    <p class="font-geist-mono text-sm font-semibold text-cyan-400">{{ getWorkShop?.power_cost_per_hour }} TON</p>
+                    <p class="font-geist-mono text-sm font-semibold text-cyan-400">{{ getWorkShop?.grade?.percent }}%</p>
                 </div>
             </div>
             <div class="main-blue-gradient"></div>
             <div class="flex items-center py-2">
-                <img class="h-6 w-6 flex-shrink-0 object-contain" src="@/assets/images/icons/lightning.png"/>
+                <img class="h-7 w-7 flex-shrink-0 object-contain" src="@/assets/images/icons/ton-hour-slate.png"/>
                 <div class="pl-3">
-                    <p class="text-xs">{{ $t("power_station.income_power") }}</p>
-                    <p class="font-geist-mono text-sm font-semibold text-cyan-400">{{ getWorkShop?.grade?.power_per_hour }} {{ $t("units-hour") }}</p>
+                    <p class="text-xs">{{ $t("boost.workshop.time") }}</p>
+                    <p class="font-geist-mono text-sm font-semibold text-cyan-400">{{ getWorkShop?.grade?.work_time_hours }} часа</p>
                 </div>
             </div>
         </div>
     </div>
     <div class="linear-border--slate relative mt-10 w-full p-4">
-        <router-link class="w-full rounded-xl border border-cyan-400/50 block" to="/bill-history">
+        <router-link class="w-full rounded-xl border border-cyan-400/50 block" to="/bill-history?type=workstation">
             <p class="p-3 text-sm text-white">{{ $t("view-payments-history") }}</p>
         </router-link>
         <div class="my-4 flex items-center gap-5 mb-8">
@@ -43,7 +43,7 @@
                     <div class="pb-2 pt-1">
                         <div class="line-progress" :style="'--width:' + progressPercent + '%'"></div>
                     </div>
-                    <button class="main-action--green" @click="boost">
+                    <button class="main-action--green" @click="boost" :disabled="loading1">
                         <div class="mx-auto flex items-center text-xs">
                             <p class="pr-2 text-white">{{ $t("boost.title") }}</p>
                             <p class="font-geist-mono font-semibold text-cyan-400">{{ boostCost.toFixed(2) }} TON</p>
@@ -92,13 +92,13 @@
             <div class="font-geist-mono text-2xl font-bold text-blue-400">{{ this.getWorkShop?.next_grade?.cost }} TON</div>
             </div>
         </div>
-        <button class="main-action--green mt-5" @click="goAction" v-if="variant == 1">
+        <button class="main-action--green mt-5" @click="goAction" v-if="variant == 1" :disabled="loading2">
             <div class="mx-auto flex items-center py-1 text-sm">
             <p class="pr-2 text-white">{{ $t("pay") }}</p>
             <p class="font-geist-mono font-semibold text-cyan-400">{{ this.getWorkShop?.next_level?.cost }} TON</p>
             </div>
         </button>
-        <button class="main-action--green mt-5" @click="goAction" v-else>
+        <button class="main-action--green mt-5" @click="goAction" v-else :disabled="loading2">
             <div class="mx-auto flex items-center py-1 text-sm">
             <p class="pr-2 text-white">{{ $t("pay") }}</p>
             <p class="font-geist-mono font-semibold text-cyan-400">{{ this.getWorkShop?.next_grade?.cost }} TON</p>
@@ -124,7 +124,9 @@ export default {
             variant: 0,
             intervalId: null,
             remainingTime: null,
-            initData: null
+            initData: null,
+            loading1: false,
+            loading2: false
         }
     },
     computed: {
@@ -148,7 +150,7 @@ export default {
         }
     },
     mounted() {
-        if(!this.getWorkShop){
+        if(this.getInitData){
             this.getWorkShopData()
         }
         this.updateTimer();
@@ -161,7 +163,7 @@ export default {
                 t: "workstation",
                 a: "get",
             };
-            axios.post("https://tonminefarm.com/request", data).then((res) => {
+            axios.post("https://api.tonminefarm.com/request", data).then((res) => {
                 if (res.data.status === 200) {
                     this.$store.commit('setWorkShop', res?.data?.data)
                 }
@@ -169,15 +171,21 @@ export default {
         },
         showModalHandle(variant){
             if(!this.getWorkShop.level.level == this.getWorkShop.max_level.level){
-                this.toast.error('Это максимальный уровень повысьте грейд!')
+                if(this.$i18n.locale == 'ru'){
+                    this.toast.error('Это максимальный уровень повысьте грейд!')
+                } else{
+                    this.toast.error('This is the maximum level, upgrade the grade!')
+                }
             } else{
                 this.showModal = true;
+                this.$store.commit('setShowModal', true)
                 this.item = this.getWorkShop;
                 this.variant = variant
             }
         },
         closeModal() {
             this.showModal = false;
+            this.$store.commit('setShowModal', false)
             this.item = null;
         },
         pad(value) {
@@ -192,67 +200,72 @@ export default {
                 this.intervalId = null;
             }
         },
-        boost(){
-            let data = {
+        async boost() {
+            if (this.loading1) return; // Блокировка повторного вызова
+            this.loading1 = true;
+
+            const data = {
                 initData: this.getInitData,
                 t: "workstation",
-                a: "boost_level"
+                a: "boost_level",
             };
-            axios.post("https://tonminefarm.com/request", data).then(res => {
+
+            try {
+                const res = await axios.post("https://api.tonminefarm.com/request", data);
                 if (res.data.status === 200) {
                     this.getWorkShopData();
-                    this.toast.success('Успешно! Вы ускорили');
+                    const message = this.$i18n.locale === 'ru' 
+                        ? 'Успешно! Вы ускорили.' 
+                        : 'Success! You have boosted.';
+                    this.toast.success(message);
                     this.updateTimer();
                     if (this.intervalId) {
                         clearInterval(this.intervalId);
                     }
                     this.intervalId = setInterval(this.updateTimer, 1000);
-                } else{
+                } else {
                     this.toast.error(res.data.status_text);
                 }
-            })
+            } catch (error) {
+                console.error(error);
+                this.toast.error('Произошла ошибка');
+            } finally {
+                this.loading1 = false;
+            }
         },
-        goAction(){
-            if(this.variant == 1){
-                let data = {
-                    initData: this.getInitData,
-                    t: "workstation",
-                    a: "level_up"
-                };
-                axios.post("https://tonminefarm.com/request", data).then(res => {
-                    this.closeModal()
-                    if (res.data.status === 200) {
-                        this.getWorkShopData();
-                        this.toast.success('Вы перешли на следующий уровень!');
-                        this.updateTimer();
-                        if (this.intervalId) {
-                            clearInterval(this.intervalId);
-                        }
-                        this.intervalId = setInterval(this.updateTimer, 1000);
-                    } else{
-                        this.toast.error(res.data.status_text);
+        async goAction() {
+            if (this.loading2) return; // Блокировка повторного вызова
+            this.loading2 = true;
+
+            const action = this.variant === 1 ? "level_up" : "grade_up";
+            const data = {
+                initData: this.getInitData,
+                t: "workstation",
+                a: action,
+            };
+
+            try {
+                const res = await axios.post("https://api.tonminefarm.com/request", data);
+                this.closeModal();
+                if (res.data.status === 200) {
+                    this.getWorkShopData();
+                    const message = this.$i18n.locale === 'ru' 
+                        ? 'Вы перешли на следующий уровень!' 
+                        : 'You have moved to the next level!';
+                    this.toast.success(message);
+                    this.updateTimer();
+                    if (this.intervalId) {
+                        clearInterval(this.intervalId);
                     }
-                })
-            } else{
-                let data = {
-                    initData: this.getInitData,
-                    t: "workstation",
-                    a: "grade_up"
-                };
-                axios.post("https://tonminefarm.com/request", data).then(res => {
-                    this.closeModal()
-                    if (res.data.status === 200) {
-                        this.getWorkShopData();
-                        this.toast.success('Вы перешли на следующий уровень!');
-                        this.updateTimer();
-                        if (this.intervalId) {
-                            clearInterval(this.intervalId);
-                        }
-                        this.intervalId = setInterval(this.updateTimer, 1000);
-                    } else{
-                        this.toast.error(res.data.status_text);
-                    }
-                })
+                    this.intervalId = setInterval(this.updateTimer, 1000);
+                } else {
+                    this.toast.error(res.data.status_text);
+                }
+            } catch (error) {
+                console.error(error);
+                this.toast.error('Произошла ошибка');
+            } finally {
+                this.loading2 = false;
             }
         }
     },

@@ -7,10 +7,10 @@
     </div>
     <div class="grid grid-cols-2 gap-5 py-6">
       <div class="relative">
-        <h5 class="-mb-4 text-center font-patsy text-lg">
-          <span class="text-white"> {{ $t("level") }} {{ getFarm?.grade?.level }}</span> /{{ getFarm?.max_up?.level }}
+        <h5 class="text-center font-patsy text-lg">
+          <span class="text-white"> {{ $t("building-grade") }} {{ getFarm?.grade?.level }}</span> /{{ getFarm?.max_up?.level }}
         </h5>
-        <div class="max-w-40 mt-8">
+        <div class="cgrade-image">
           <img class="w-full" :src="getFarm?.grade?.image" />
         </div>
         <div class="bg-shape-radial--fuchsia h-28 w-80 blur-3xl"></div>
@@ -18,8 +18,8 @@
       <div class="grid content-center pt-10">
         <div class="flex py-1">
           <img class="h-9 w-9 flex-shrink-0 grayscale" src="@/assets/images/icons/generator.png" v-if="getFarm?.ups == 0" />
-          <img class="h-9 w-9 flex-shrink-0" :src="getFarm?.ups_image" v-else />
-          <div class="pl-3">
+          <img class="w-9 w-9 flex-shrink-0" :src="getFarm?.ups_image" v-else />
+          <div class="pl-1">
             <p class="text-xs">
               {{ $t("ups") }}
             </p>
@@ -31,7 +31,7 @@
         </div>
         <div class="main-blue-gradient"></div>
         <div class="flex py-1">
-          <img class="h-9 w-9 flex-shrink-0" src="@/assets/images/mining-speed.svg" />
+          <img class="h-7 w-7 flex-shrink-0" src="@/assets/images/icons/mining-speed.png" />
           <div class="pl-3">
             <p class="text-xs">
               {{ $t("income-hour") }}
@@ -43,7 +43,7 @@
         </div>
         <div class="main-blue-gradient"></div>
         <div class="flex py-1 items-center">
-          <img class="h-9 w-9 flex-shrink-0" src="@/assets/images/icons/ton-slate.png" />
+          <img class="h-7 w-7 flex-shrink-0" src="@/assets/images/icons/ton-slate.png" />
           <div class="pl-3">
             <p class="text-xs">
               {{ $t("uninterrupted-operation") }}
@@ -55,13 +55,13 @@
         </div>
         <div class="main-blue-gradient"></div>
         <div class="flex py-1">
-          <img class="h-8 w-8 flex-shrink-0" src="@/assets/images/icons/power-consumption.png" />
+          <img class="h-7 w-7 flex-shrink-0" src="@/assets/images/icons/power-consumption.png" />
           <div class="pl-3">
             <p class="text-xs">
               {{ $t("power-consumption") }}
             </p>
             <p class="font-geist-mono font-semibold text-cyan-400">
-              {{ getFarm?.energy_per_hour }}
+              {{ getFarm?.energy_per_hour }}/{{ getFarm?.max_energy_per_hour }}
               <span class="text-xs">
                 {{ $t("units-hour") }}
               </span>
@@ -79,8 +79,8 @@
       </div>
     </router-link>
 
-    <div class="button-wrap" v-else>
-      <button @click="goWorking" class="main-action--amber">
+    <div class="button-wrap mb-2" v-else>
+      <button @click="goWorking" class="main-action--amber" :disabled="loading1">
         <div class="mx-auto flex items-center text-sm">
           <p class="pr-2 text-white">
             {{ $t("restart-mining") }}
@@ -97,7 +97,10 @@
         @click="showModalHandle(item)"
       >
         <template v-if="!item.asic">
-          <img class="figure-shape--bg" src="@/assets/images/shapes/hexagon-empty.png" />
+          <div class="poly-item">
+            <img class="figure-shape--bg" src="@/assets/images/shapes/hexagon-empty.png" />
+            <PolyEmpty :animationData="lottieJson" />
+          </div>
         </template>
         <template v-else>
           <template v-if="item?.asic?.resource?.resources_used_percent > 0">
@@ -106,7 +109,7 @@
               <span class="text-xs text-cyan-400 text-green-used" v-if="item?.asic?.resource?.resources_used_percent > 10 && item?.asic?.resource?.working == 1">{{ item?.asic?.resource?.resources_used_percent }}%</span>
               <span class="text-xs text-cyan-400 text-red-used" v-if="item?.asic?.resource?.resources_used_percent < 11">{{ item?.asic?.resource?.resources_used_percent }}%</span>
             </div>
-            <img class="aboslute position-center w-2/3" :src="item?.asic?.info?.image" />
+            <img class="aboslute position-center asic-icon" :src="item?.asic?.info?.image" />
             <div class="bg-shape-radial--fuchsia h-3/4 w-3/4 blur-sm"></div>
             <img class="figure-shape--bg" src="@/assets/images/shapes/hexagon-with-item.png" />
           </template>
@@ -114,7 +117,7 @@
             <div class="linear-border--rose position-center-x">
               <span class="text-xs text-rose-500">{{ item?.asic?.resource?.resources_used_percent }}%</span>
             </div>
-            <img class="aboslute position-center w-2/3" :src="item?.asic?.info?.image" />
+            <img class="aboslute position-center asic-icon" :src="item?.asic?.info?.image" />
             <div class="bg-shape-radial--fuchsia h-3/4 w-3/4 blur-sm"></div>
             <img class="figure-shape--bg" src="@/assets/images/shapes/hexagon-wrong.png" />
           </template>
@@ -144,6 +147,8 @@ import Modal from "@/components/Farm/Modal.vue";
 import { mapGetters } from "vuex";
 import axios from 'axios'
 import { useToast } from 'vue-toastification'
+import PolyEmpty from "@/components/PolyEmpty.vue";
+import animationData from "@/assets/anim1.json";
 
 export default {
   name: "FarmView",
@@ -151,11 +156,14 @@ export default {
     return {
       showModal: false,
       item: null,
-      toast: useToast()
+      toast: useToast(),
+      lottieJson: animationData,
+      loading1: false
     };
   },
   components: {
     Modal,
+    PolyEmpty
   },
   computed: {
     ...mapGetters([
@@ -170,11 +178,22 @@ export default {
     let tg = window?.Telegram?.WebApp;
     tg.BackButton.show();
     tg.onEvent("backButtonClicked", this.goHome);
-    if(!this.getPowerStation){
-      this.getFarmData()
-    }
     if(!this.getInitData){
       this.$store.commit('setInitData', tg?.initData)
+      let data = {
+        initData: tg.initData,
+        t: "farm",
+        a: "get",
+      };
+      axios.post("https://api.tonminefarm.com/request", data).then((res) => {
+        if (res.data.status === 200) {
+          this.$store.commit('setFarm', res?.data?.data)
+        } else{
+          this.toast.error(res.data.status_text);
+        }
+      });
+    } else{
+      this.getFarmData()
     }
   },
   methods: {
@@ -203,27 +222,41 @@ export default {
         t: "farm",
         a: "get",
       };
-      axios.post("https://tonminefarm.com/request", data).then((res) => {
+      axios.post("https://api.tonminefarm.com/request", data).then((res) => {
         if (res.data.status === 200) {
           this.$store.commit('setFarm', res?.data?.data)
+        } else{
+          this.toast.error(res.data.status_text);
         }
       });
     },
-    goWorking(){
-      let data = {
-        initData: this.getInitData,
-        t: "farm",
-        a: "start_mining",
+    async goWorking() {
+      if (this.loading1) return; // Защита от повторных запросов
+      this.loading1 = true;
+      const data = {
+          initData: this.getInitData,
+          t: "farm",
+          a: "start_mining",
       };
-      axios.post("https://tonminefarm.com/request", data).then((res) => {
-        if (res.data.status === 200) {
-          this.getFarmData()
-          this.toast.success('Ферма успешно запущена!')
-        } else{
-          this.toast.error(res.data.status_text)
-        }
-      });
-    }
+      try {
+          const res = await axios.post("https://api.tonminefarm.com/request", data);
+
+          if (res.data.status === 200) {
+              this.getFarmData();
+              const successMessage = this.$i18n.locale === 'ru'
+                  ? 'Ферма успешно запущена!'
+                  : 'The farm has been successfully launched!';
+              this.toast.success(successMessage);
+          } else {
+              this.toast.error(res.data.status_text);
+          }
+      } catch (error) {
+          console.error("Ошибка запуска фермы:", error);
+          this.toast.error("Произошла ошибка при запуске фермы.");
+      } finally {
+          this.loading1 = false;
+      }
+    },
   },
 };
 </script>
@@ -241,5 +274,8 @@ export default {
   .button-wrap{
     width: 100%;
     padding: 0 10px;
+  }
+  .asic-icon{
+    width: 55%;
   }
 </style>

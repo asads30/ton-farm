@@ -129,7 +129,7 @@
                 </div>
                 <div class="main-action--green mt-4" @click="showModalHandle(lootbox, 'lootbox')">
                   <div class="mx-auto flex items-center text-sm">
-                    <p class="pr-2 text-xs text-white">{{ $t("info") }}</p>
+                    <p class="pr-2 text-xs text-white">{{ $t("info.title") }}</p>
                   </div>
                 </div>
               </div>
@@ -236,7 +236,7 @@
                   <div class="flex pb-2">
                     <img
                       class="h-8 w-8 flex-shrink-0 object-contain"
-                      src="@/assets/images/icons/ton-hour-slate.png"
+                      src="@/assets/images/icons/ton-slate.png"
                     />
                     <div class="pl-3">
                       <p class="text-xs">
@@ -255,19 +255,19 @@
                     />
                     <div class="pl-3">
                       <p class="text-xs">
-                        {{ $t("mining-speed") }}
+                        {{ $t("power-consumption") }}
                       </p>
                       <p class="font-geist-mono font-semibold text-cyan-400">
                         {{ item?.info?.energy_per_hour }} <span class="text-xs">{{ $t("units-hour") }}</span>
                       </p>
                     </div>
                   </div>
-                  <button @click="activateAsic(item?.id, 0)" class="main-action--green mt-4" v-if="item?.status == 0">
+                  <button @click="activateAsic(item?.id, 0)" class="main-action--green mt-4" v-if="item?.status == 0" :disabled="loading1">
                     <div class="mx-auto flex items-center text-sm">
                       <p class="text-white">{{ $t("activate") }}</p>
                     </div>
                   </button>
-                  <button @click="activateAsic(item?.id, 1)" class="main-action--amber mt-4" v-if="item?.status == 1">
+                  <button @click="activateAsic(item?.id, 1)" class="main-action--amber mt-4" v-if="item?.status == 1" :disabled="loading1">
                     <div class="mx-auto flex items-center text-sm">
                       <p class="text-white">{{ $t("deactivate") }}</p>
                     </div>
@@ -277,6 +277,7 @@
                       <p class="text-white">Починить</p>
                     </div>
                   </button>
+                  <div class="main-action--amber store-remont not mt-4" v-if="item?.status == 3"><div class="mx-auto flex items-center text-sm">В ремонте</div></div>
                 </div>
               </template>
             </div>
@@ -309,7 +310,8 @@ export default {
       item: null,
       showModal2: false,
       item2: null,
-      toast: useToast()
+      toast: useToast(),
+      loading1: false
     };
   },
   computed: {
@@ -327,12 +329,25 @@ export default {
     tg.expand();
     tg.BackButton.show();
     tg.onEvent("backButtonClicked", this.goHome);
-    this.getShopData()
     if (this.$route?.query?.type == "other") {
       this.active = 3;
     }
     if(!this.getInitData){
       this.$store.commit('setInitData', tg?.initData)
+      let data = {
+        initData: tg?.initData,
+        t: "shop",
+        a: "get",
+      };
+      axios.post("https://api.tonminefarm.com/request", data).then((res) => {
+        if (res.data.status === 200) {
+          this.$store.commit('setShop', res?.data?.data)
+        } else{
+          this.toast.error(res.data.status_text);
+        }
+      });
+    } else{
+      this.getShopData()
     }
   },
   methods: {
@@ -369,38 +384,43 @@ export default {
         t: "shop",
         a: "get",
       };
-      axios.post("https://tonminefarm.com/request", data).then((res) => {
+      axios.post("https://api.tonminefarm.com/request", data).then((res) => {
         if (res.data.status === 200) {
           this.$store.commit('setShop', res?.data?.data)
-        }
-      });
-    },
-    activateAsic(id, status){
-      if(status === 1){
-        var data = {
-          initData: this.getInitData,
-          t: "asic",
-          a: "deactivate",
-          asic_id: id
-        };
-      }
-      if(status === 0){
-        var data = {
-          initData: this.getInitData,
-          t: "asic",
-          a: "activate",
-          asic_id: id
-        };
-      }
-      axios.post("https://tonminefarm.com/request", data).then((res) => {
-        if (res.data.status === 200) {
-          this.getShopData()
-          this.toast.success('Вы успешно активировали асик!');
         } else{
           this.toast.error(res.data.status_text);
         }
       });
-    }
+    },
+    async activateAsic(id, status) {
+      if (this.loading1) return; // Защита от повторных запросов
+      this.loading1 = true;
+      const action = status === 1 ? 'deactivate' : 'activate';
+      const data = {
+          initData: this.getInitData,
+          t: "asic",
+          a: action,
+          asic_id: id
+      };
+      try {
+          const res = await axios.post("https://api.tonminefarm.com/request", data);
+
+          if (res.data.status === 200) {
+              this.getShopData();
+              const successMessage = this.$i18n.locale === 'ru'
+                  ? (status === 1 ? 'Вы успешно деактивировали асик!' : 'Вы успешно активировали асик!')
+                  : (status === 1 ? 'You have successfully deactivated the ASIC!' : 'You have successfully activated the ASIC!');
+              this.toast.success(successMessage);
+          } else {
+              this.toast.error(res.data.status_text);
+          }
+      } catch (error) {
+          console.error("Ошибка активации/деактивации ASIC:", error);
+          this.toast.error("Произошла ошибка при активации/деактивации ASIC.");
+      } finally {
+          this.loading1 = false;
+      }
+    },
   },
 };
 </script>

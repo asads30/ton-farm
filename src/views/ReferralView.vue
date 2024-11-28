@@ -4,24 +4,26 @@
       <h2 class="font-patsy text-3xl text-white mb-2">
         {{ $t("invite-friends") }}
       </h2>
-      <div class="flex items-center text-xs font-light">
-        <p class="text-zinc-300">
-          {{ $t("receive-bonuses") }}
-        </p>
-      </div>
     </div>
     <ProfileCard />
     <div class="linear-border--slate relative p-3 my-2">
       <div class="flex items-center text-left">
         <p class="mr-auto font-light text-zinc-300 text-xs">
-          {{ $t("referral-total-income") }}
+          {{ $t("referall.total") }}
         </p>
-        <p class="font-geist-mono text-lg">5%</p>
+        <p class="font-geist-mono text-lg">{{ getReferrals?.total_paid }} TON</p>
       </div>
       <div class="h-[1px] w-full bg-slate-800 my-2"></div>
       <div class="flex items-center text-left">
         <p class="mr-auto font-light text-zinc-300 text-xs">
-          {{ $t("refferal.level") }}
+          {{ $t("referall.percent") }}
+        </p>
+        <p class="font-geist-mono text-lg">{{ formattedPercentage(getReferrals?.percent) }}</p>
+      </div>
+      <div class="h-[1px] w-full bg-slate-800 my-2"></div>
+      <div class="flex items-center text-left">
+        <p class="mr-auto font-light text-zinc-300 text-xs">
+          {{ $t("referall.level") }}
         </p>
         <p class="font-geist-mono text-lg">{{ getReferrals?.ref_level }}</p>
       </div>
@@ -60,7 +62,7 @@
     <div class="py-4">
       <div class="flex px-5 text-xs text-zinc-300">
         <p>{{ $t("name") }}</p>
-        <p class="ml-auto">{{ $t("income-hour") }}</p>
+        <p class="ml-auto">{{ $t("referall.total") }}</p>
       </div>
       <div class="py-2 grid gap-2">
         <div class="relative p-2" v-for="referall in getReferrals?.data" :key="referall">
@@ -71,7 +73,7 @@
             <div class="text-sm text-white pl-2">{{ referall?.first_name }}</div>
             <div class="flex items-center text-white ml-auto">
               <img class="mr-1 h-4 w-4" src="@/assets/images/icons/ton.png" />
-              <p class="font-geist-mono text-xs font-medium">{{ referall?.ton_per_hour }} TON</p>
+              <p class="font-geist-mono text-xs font-medium">{{ referall?.total_profit }} TON</p>
             </div>
           </div>
         </div>
@@ -86,12 +88,14 @@ import Bottombar from "@/components/Bottombar.vue";
 import ProfileCard from "@/components/ProfileCard.vue";
 import { mapGetters } from "vuex";
 import axios from 'axios'
+import { useToast } from "vue-toastification";
 
 export default {
   name: "Referral",
   data() {
     return {
-      url: null
+      url: null,
+      toast: useToast()
     }
   },
   components: {
@@ -107,7 +111,7 @@ export default {
   mounted() {
     let tg = window?.Telegram?.WebApp;
     let user = tg?.initDataUnsafe;
-    this.url = 'https://t.me/asadslavatestbot/tonfarm?startapp=' + user?.user?.id
+    this.url = 'https://t.me/TonFarmOfficial_bot/app?startapp=' + user?.user?.id
     this.id = user?.user?.id
     tg.BackButton.hide();
     if(!this.getReferrals){
@@ -119,14 +123,8 @@ export default {
   },
   methods: {
     copyLink() {
-      const copyText = "https://t.me/";
-      navigator.clipboard.writeText(copyText).then(
-        function () {
-          alert("Ссылка скопирована: " + copyText);
-        },
-        function (err) {
-          console.error("Ошибка копирования ссылки: ", err);
-        }
+      navigator.clipboard.writeText(this.url).then(
+        this.toast.success(this.$i18n.locale == 'ru' ? 'Ссылка скопирована' : 'Link saved')
       );
     },
     getReferralsData(){
@@ -135,16 +133,21 @@ export default {
         t: "account",
         a: "get_ref",
       };
-      axios.post("https://tonminefarm.com/request", data).then((res) => {
+      axios.post("https://api.tonminefarm.com/request", data).then((res) => {
         if (res.data.status === 200) {
           this.$store.commit('setReferrals', res?.data)
+        } else{
+          this.toast.error(res.data.status_text);
         }
       });
     },
     share(){
-      let url = 'https://t.me/share/url?url=https://t.me/asadslavatestbot/tonfarm?startapp=' + this.id + '&text=Ton%20Farm%0AStart%20mining%20now%21'
+      let url = 'https://t.me/share/url?url=https://t.me/TonFarmOfficial_bot/app?startapp=' + this.id + '&text=Ton%20Farm%0AStart%20mining%20now%21'
       window.open(url)
-    }
+    },
+    formattedPercentage(percent) {
+      return `${Math.round(percent)}%`;
+    },
   },
 };
 </script>

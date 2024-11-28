@@ -47,7 +47,7 @@
         </div>
       </div>
       <div class="pt-3">
-        <button @click="goBoost" class="main-action--green">
+        <button @click="goBoost" class="main-action--green" :disabled="loading1">
           <div class="mx-auto flex items-center py-1 text-sm">
             <p class="pr-2 text-white">
               {{ $t("boost-repair-for") }}
@@ -63,6 +63,7 @@
 
 <script>
 import axios from 'axios'
+import { useToast } from 'vue-toastification';
 import { mapGetters } from "vuex";
 
 export default {
@@ -71,7 +72,9 @@ export default {
     return {
       intervalId: null,
       remainingTime: null,
-      initData: null
+      initData: null,
+      toast: useToast(),
+      loading1: false
     }
   },
   computed: {
@@ -122,42 +125,58 @@ export default {
         t: "workstation",
         a: "get",
       };
-      axios.post("https://tonminefarm.com/request", data).then((res) => {
+      axios.post("https://api.tonminefarm.com/request", data).then((res) => {
         if (res.data.status === 200) {
           this.$store.commit('setWorkShop', res?.data?.data)
+        } else{
+          this.toast.error(res.data.status_text)
         }
       });
     },
-    goBoost(){
-      let data = {
-        initData: this.getInitData,
-        t: "asic",
-        a: "boost_repair",
-        asic_id: this.item.id
+    async goBoost() {
+      if (this.loading1) return; // Предотвращение повторного вызова
+      this.loading1 = true;
+      const boostData = {
+          initData: this.getInitData,
+          t: "asic",
+          a: "boost_repair",
+          asic_id: this.item.id,
       };
-      axios.post("https://tonminefarm.com/request", data).then(res => {
-        if(res.data.status == 200){
-          this.$emit("close");
-          try {
-            let data = {
-              initData: this.getInitData,
-              t: "asic",
-              a: "activate",
-              asic_id: this.item.id
-            }
-            axios.post('https://tonminefarm.com/request', data).then(res => {
-              if(res.data.status == 200){
-                this.$router.push('/farm')
-              } else{
-                this.$router.push({ name: "store", query: { type: 'other' } });
-              }
-            })
-          } catch (error) {
-            console.log(error)
+      try {
+          const boostRes = await axios.post("https://api.tonminefarm.com/request", boostData);
+
+          if (boostRes.data.status === 200) {
+              this.$emit("close");
+              await this.handleActivation(this.item.id);
+          } else {
+              this.toast.error(boostRes.data.status_text);
           }
-          
-        }
-      })
+      } catch (error) {
+          console.error("Ошибка в процессе ускорения ремонта:", error);
+          this.toast.error("Произошла ошибка при ускорении ремонта.");
+      } finally {
+          this.loading1 = false;
+      }
+    },
+    async handleActivation(asic_id) {
+      const activationData = {
+          initData: this.getInitData,
+          t: "asic",
+          a: "activate",
+          asic_id,
+      };
+      try {
+          const activationRes = await axios.post("https://api.tonminefarm.com/request", activationData);
+
+          if (activationRes.data.status === 200) {
+              this.$router.push("/farm");
+          } else {
+              this.$router.push({ name: "store", query: { type: "other" } });
+          }
+      } catch (error) {
+          console.error("Ошибка активации ASIC:", error);
+          this.toast.error("Произошла ошибка при активации.");
+      }
     }
   },
   beforeDestroy() {

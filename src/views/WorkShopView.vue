@@ -7,19 +7,35 @@
     </div>
     <div class="grid grid-cols-2 gap-5 py-6">
       <div class="relative">
-        <h5 class="-mb-4 text-center font-patsy text-lg">
+        <h5 class="text-center font-patsy text-lg">
           <span class="text-white">
-            {{ $t("grade") }} {{ getWorkShop?.grade?.level }}</span> /{{ getWorkShop?.max_up?.level }}
+            {{ $t("building-grade") }} {{ getWorkShop?.grade?.level }}</span> /{{ getWorkShop?.max_up?.level }}
         </h5>
-        <div class="max-w-40 mt-2">
+        <div class="cgrade-image">
           <img class="w-full" :src="getWorkShop?.grade?.image" />
         </div>
         <div class="bg-shape-radial--fuchsia h-28 w-80 blur-3xl"></div>
       </div>
       <div class="grid content-center pt-10">
         <div class="flex items-center pb-2">
+          <img class="h-7 w-7 flex-shrink-0 object-contain" src="@/assets/images/icons/ton-slate.png" />
+          <div class="pl-3">
+            <p class="text-xs">{{ $t("boost.workshop.price") }}</p>
+            <p class="font-geist-mono text-sm font-semibold text-cyan-400">{{ getWorkShop?.grade?.percent }}%</p>
+          </div>
+        </div>
+        <div class="main-blue-gradient"></div>
+        <div class="flex items-center py-2">
+            <img class="h-7 w-7 flex-shrink-0 object-contain" src="@/assets/images/icons/ton-hour-slate.png"/>
+            <div class="pl-3">
+                <p class="text-xs">{{ $t("boost.workshop.time") }}</p>
+                <p class="font-geist-mono text-sm font-semibold text-cyan-400">{{ getWorkShop?.grade?.work_time_hours }} часа</p>
+            </div>
+        </div>
+        <div class="main-blue-gradient"></div>
+        <div class="flex items-center py-2">
           <img
-            class="h-6 w-6 flex-shrink-0 object-contain"
+            class="h-7 w-7 flex-shrink-0 object-contain"
             src="@/assets/images/icons/empty-hexagon.png"
           />
           <div class="pl-3">
@@ -63,13 +79,16 @@
         @click="goItem(item)"
       >
         <template v-if="!item.asic">
-          <img class="figure-shape--bg" src="@/assets/images/shapes/red-hexagon-empty.png" />
+          <div class="poly-item">
+            <img src="@/assets/images/shapes/red-hexagon-empty.png" />
+          </div>
+          <PolyEmpty :animationData="lottieJson" />
         </template>
         <template v-else>
           <div class="linear-border--red position-center-x" v-if="item?.asic?.info">
             <span class="text-xs text-cyan-400">{{ item?.asic?.repair_percent }}%</span>
           </div>
-          <img class="aboslute position-center w-3/4" :src="item?.asic?.info?.image" />
+          <img class="aboslute position-center asic-icon" :src="item?.asic?.info?.image" />
           <div class="bg-shape-radial--fuchsia h-3/4 w-3/4 blur-sm"></div>
           <img class="figure-shape--bg" src="@/assets/images/shapes/red-hexagon-with-item.png" />
         </template>
@@ -97,6 +116,9 @@
 import Modal from "@/components/WorkShop/Modal.vue";
 import { mapGetters } from "vuex";
 import axios from 'axios'
+import { useToast } from "vue-toastification";
+import PolyEmpty from "@/components/WorkShop/PolyEmpty.vue";
+import animationData from "@/assets/anim1.json";
 
 export default {
   name: "WorkShopView",
@@ -136,7 +158,9 @@ export default {
       ],
       showModal: false,
       item: null,
-      initData: null
+      initData: null,
+      toast: useToast(),
+      lottieJson: animationData
     };
   },
   computed: {
@@ -150,22 +174,33 @@ export default {
   },
   components: {
     Modal,
+    PolyEmpty
   },
   mounted() {
     let tg = window?.Telegram?.WebApp;
     tg.BackButton.show();
     tg.onEvent("backButtonClicked", this.goHome);
-    if(!this.getPowerStation){
-      this.getWorkShopData()
-    }
     if(!this.getInitData){
       this.$store.commit('setInitData', tg?.initData)
+      let data = {
+        initData: tg?.initData,
+        t: "workstation",
+        a: "get",
+      };
+      axios.post("https://api.tonminefarm.com/request", data).then((res) => {
+        if (res.data.status === 200) {
+          this.$store.commit('setWorkShop', res?.data?.data)
+        } else{
+          this.toast.error(res.data.status_text)
+        }
+      });
+    } else{
+      this.getWorkShopData()
     }
     if (this.$route?.query?.id) {
       try {
         this.getWorkShopData()
       } catch (error) {
-        console.log(error)
       }
       setTimeout(() => {
         this.findAsicById(this.$route?.query?.id);
@@ -194,9 +229,11 @@ export default {
         t: "workstation",
         a: "get",
       };
-      axios.post("https://tonminefarm.com/request", data).then((res) => {
+      axios.post("https://api.tonminefarm.com/request", data).then((res) => {
         if (res.data.status === 200) {
           this.$store.commit('setWorkShop', res?.data?.data)
+        } else{
+          this.toast.error(res.data.status_text)
         }
       });
     },
@@ -224,5 +261,11 @@ export default {
   .button-wrap{
     width: 100%;
     padding: 0 10px;
+  }
+  .asic-icon{
+    width: 55%;
+  }
+  .cgrade-image{
+    padding: 0 2px 0 14px;
   }
 </style>

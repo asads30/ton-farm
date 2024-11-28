@@ -5,8 +5,8 @@
     </div>
     <div class="grid grid-cols-2 gap-5 py-6">
       <div class="relative">
-        <h5 class="-mb-4 text-center font-patsy text-lg"><span class="text-white">{{ $t("grade") }} {{ getPowerStation?.grade?.level }}</span> /{{ getPowerStation?.max_up?.level }}</h5>
-        <div class="max-w-40">
+        <h5 class="text-center font-patsy text-lg"><span class="text-white">{{ $t("building-grade") }} {{ getPowerStation?.grade?.level }}</span> /{{ getPowerStation?.max_up?.level }}</h5>
+        <div class="cgrade-image">
           <img class="w-full" :src="getPowerStation?.grade?.image" />
         </div>
         <div class="bg-shape-radial--fuchsia h-28 w-80 blur-3xl"></div>
@@ -21,7 +21,7 @@
         </div>
         <div class="main-blue-gradient"></div>
         <div class="flex items-center py-2">
-          <img class="h-6 w-6 flex-shrink-0 object-contain" src="@/assets/images/icons/lightning.png" />
+          <img class="h-7 w-7 flex-shrink-0 object-contain" src="@/assets/images/icons/lightning.png" />
           <div class="pl-3">
             <p class="text-xs">{{ $t("power_station.income_power") }}</p>
             <p class="font-geist-mono text-sm font-semibold text-cyan-400">{{ getPowerStation?.grade?.power_per_hour }} {{ $t("units-hour") }}</p>
@@ -29,7 +29,7 @@
         </div>
         <div class="main-blue-gradient"></div>
         <div class="flex pt-2">
-          <img class="h-6 w-6 flex-shrink-0 object-contain" src="@/assets/images/icons/debt.png" />
+          <img class="h-7 w-7 flex-shrink-0 object-contain" src="@/assets/images/icons/debt.png" />
           <div class="pl-3 flex-1">
             <p class="text-xs">{{ $t("debt") }}</p>
             <p class="font-geist-mono text-sm font-semibold text-red-600">{{ getPowerStation?.debt }} TON</p>
@@ -49,12 +49,15 @@
     </div>
     <div class="grid grid-cols-3 gap-1 py-2">
       <article class="figure-shape" v-for="generator in getPowerStation?.generators" :key="generator?.id" @click="goDetails(generator)">
-        <img class="aboslute position-center w-3/4" :src="generator?.info?.image" />
+        <img class="aboslute position-center asic-icon" :src="generator?.info?.image" />
         <div class="bg-shape-radial--fuchsia h-3/4 w-3/4 blur-sm"></div>
         <img class="figure-shape--bg" src="@/assets/images/shapes/decagon-with-item.png" />
       </article>
       <article class="figure-shape" @click="goShop('other')">
-        <img class="figure-shape--bg" src="@/assets/images/shapes/decagon-empty.png" />
+        <div class="poly-item">
+          <img src="@/assets/images/shapes/decagon-empty.png" />
+        </div>
+        <PolyEmpty :animationData="lottieJson" />
       </article>
     </div>
     <Modal :show="showModal" :item="item" @close="closeModal" :variant="variant" :summ="summ" />
@@ -65,6 +68,9 @@
 import axios from 'axios'
 import Modal from "@/components/PowerStation/Modal.vue";
 import { mapGetters } from 'vuex'
+import { useToast } from 'vue-toastification';
+import PolyEmpty from "@/components/PowerStation/PolyEmpty.vue";
+import animationData from "@/assets/anim1.json";
 
 export default {
   name: "PowerStationView",
@@ -72,7 +78,9 @@ export default {
     return {
       summ: 0,
       showModal: false,
-      variant: 0
+      variant: 0,
+      toast: useToast(),
+      lottieJson: animationData
     }
   },
   computed: {
@@ -82,15 +90,29 @@ export default {
     ])
   },
   components: {
-    Modal
+    Modal,
+    PolyEmpty
   },
   mounted() {
     let tg = window?.Telegram?.WebApp;
     tg.BackButton.show();
     tg.onEvent("backButtonClicked", this.goHome);
-    this.getPowerStationData()
     if(!this.getInitData){
       this.$store.commit('setInitData', tg?.initData)
+      let data = {
+        initData: tg?.initData,
+        t: "powerstation",
+        a: "get",
+      };
+      axios.post("https://api.tonminefarm.com/request", data).then((res) => {
+        if (res.data.status === 200) {
+          this.$store.commit('setPowerStation', res?.data?.data)
+        } else{
+          this.toast.error(res.data.status_text);
+        }
+      });
+    } else{
+      this.getPowerStationData()
     }
   },
   methods: {
@@ -119,9 +141,11 @@ export default {
         t: "powerstation",
         a: "get",
       };
-      axios.post("https://tonminefarm.com/request", data).then((res) => {
+      axios.post("https://api.tonminefarm.com/request", data).then((res) => {
         if (res.data.status === 200) {
           this.$store.commit('setPowerStation', res?.data?.data)
+        } else{
+          this.toast.error(res.data.status_text);
         }
       });
     },
@@ -137,5 +161,8 @@ export default {
 <style lang="scss" scoped>
   .main-action--green{
     width: auto;
+  }
+  .asic-icon{
+    width: 55%;
   }
 </style>

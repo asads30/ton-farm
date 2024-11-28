@@ -44,7 +44,6 @@
     </div>
   </main>
   <Bottombar />
-  <Modal :show="showModal" :item="item" :variant="variant" @close="closeModal" />
 </template>
 
 <script>
@@ -52,19 +51,20 @@ import Bottombar from "@/components/Bottombar.vue";
 import Farm from "@/components/Boost/Farm/Index.vue";
 import PowerStation from "@/components/Boost/PowerStation/Index.vue";
 import WorkShop from "@/components/Boost/WorkShop/Index.vue";
-import Modal from "@/components/Boost/Modal.vue";
 import { mapGetters } from "vuex";
+import axios from "axios";
+import { useToast } from "vue-toastification";
 
 export default {
   name: "BoostView",
   data() {
     return {
-      active: 1
+      active: 1,
+      toast: useToast()
     };
   },
   components: {
     Bottombar,
-    Modal,
     Farm,
     PowerStation,
     WorkShop
@@ -85,7 +85,43 @@ export default {
       this.active = 1
     }
     if(!this.getInitData){
-      this.$store.commit('setInitData', tg?.initData)
+      this.$store.commit('setInitData', tg?.initData);
+      let data = {
+        initData: tg.initData,
+        t: "farm",
+        a: "get",
+      };
+      axios.post("https://api.tonminefarm.com/request", data).then((res) => {
+        if (res.data.status === 200) {
+          this.$store.commit('setFarm', res?.data?.data)
+        } else{
+          this.toast.error(res.data.status_text);
+        }
+      });
+      let data2 = {
+        initData: tg.initData,
+        t: "powerstation",
+        a: "get",
+      };
+      axios.post("https://api.tonminefarm.com/request", data2).then((res) => {
+        if (res.data.status === 200) {
+          this.$store.commit('setPowerStation', res?.data?.data)
+        } else{
+          this.toast.error(res.data.status_text);
+        }
+      });
+      let data3 = {
+        initData: tg.initData,
+        t: "workstation",
+        a: "get",
+      };
+      axios.post("https://api.tonminefarm.com/request", data3).then((res) => {
+        if (res.data.status === 200) {
+          this.$store.commit('setWorkShop', res?.data?.data)
+        } else{
+          this.toast.error(res.data.status_text);
+        }
+      });
     }
   },
   methods: {

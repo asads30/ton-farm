@@ -41,7 +41,7 @@
           </div>
         </div>
         <div class="pt-6">
-          <button @click="repair" class="main-action--green">
+          <button @click="repair" class="main-action--green" :disabled="loading1">
             <div class="mx-auto flex items-center py-1 text-sm">
               <p class="pr-2 text-white">
                 {{ $t("repair") }}
@@ -65,7 +65,8 @@
     data() {
       return {
         toast: useToast(),
-        initData: null
+        initData: null,
+        loading1: false
       }
     },
     computed: {
@@ -87,28 +88,42 @@
           t: "shop",
           a: "get",
         };
-        axios.post("https://tonminefarm.com/request", data).then((res) => {
+        axios.post("https://api.tonminefarm.com/request", data).then((res) => {
           if (res.data.status === 200) {
             this.$store.commit('setShop', res?.data?.data)
-          }
-        });
-      },
-      repair(){
-        let data = {
-          initData: this.getInitData,
-          t: "asic",
-          a: "repair",
-          asic_id: this.item.id
-        };
-        axios.post("https://tonminefarm.com/request", data).then((res) => {
-          if (res.data.status === 200) {
-            this.getShopData();
-            this.toast.success('Починили');
-            this.$emit("close");
           } else{
             this.toast.error(res.data.status_text)
           }
         });
+      },
+      async repair() {
+        if (this.loading1) return; // Защита от повторного вызова
+        this.loading1 = true;
+        const data = {
+            initData: this.getInitData,
+            t: "asic",
+            a: "repair",
+            asic_id: this.item.id,
+        };
+        try {
+            const res = await axios.post("https://api.tonminefarm.com/request", data);
+
+            if (res.data.status === 200) {
+                this.getShopData();
+                const message = this.$i18n.locale === 'ru' 
+                    ? 'Починили!' 
+                    : 'Repaired!';
+                this.toast.success(message);
+                this.$emit("close");
+            } else {
+                this.toast.error(res.data.status_text);
+            }
+        } catch (error) {
+            console.error(error);
+            this.toast.error('Произошла ошибка');
+        } finally {
+            this.loading1 = false;
+        }
       }
     },
   };

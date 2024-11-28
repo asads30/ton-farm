@@ -9,7 +9,8 @@ export default createStore({
     powerStation: null,
     workshop: null,
     farm: null,
-    referrals: null
+    referrals: null,
+    showModal: false
   },
   getters: {
     getUser(state){
@@ -35,6 +36,9 @@ export default createStore({
     },
     getReferrals(state){
       return state.referrals
+    },
+    getShowModal(state){
+      return state.showModal
     }
   },
   mutations: {
@@ -61,6 +65,9 @@ export default createStore({
     },
     setReferrals(state, referrals){
       state.referrals = referrals
+    },
+    setShowModal(state, showModal){
+      state.showModal = showModal
     }
   }
 })

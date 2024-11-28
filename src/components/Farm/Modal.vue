@@ -10,7 +10,7 @@
       <div class="mx-auto max-w-36 pb-4">
         <img :src="item?.asic?.info?.image" />
       </div>
-      <div class="asic-id">#{{ item?.asic?.asic_number }}</div>
+      <div class="asic-id" v-if="item?.asic?.asic_number > 0">#{{ item?.asic?.asic_number }}</div>
       <div class="rounded-lg border border-dashed border-cyan-400/65">
         <div class="grid content-center p-3">
           <div class="flex items-center pb-3">
@@ -41,7 +41,7 @@
         </div>
       </div>
       <div class="pt-6">
-        <button @click="repair" class="main-action--green" v-if="item?.asic?.resource?.repair_cost > 0">
+        <button @click="repair" class="main-action--green" v-if="item?.asic?.resource?.repair_cost > 0" :disabled="loading2">
           <div class="mx-auto flex items-center py-1 text-sm">
             <p class="pr-2 text-white">
               {{ $t("repair") }}
@@ -49,7 +49,7 @@
             <p class="font-geist-mono font-semibold text-cyan-400">{{ item?.asic?.resource?.repair_cost }} TON</p>
           </div>
         </button>
-        <button @click="deactivate" class="main-action--amber mt-4">
+        <button @click="deactivate" class="main-action--amber mt-4" :disabled="loading1">
           <div class="mx-auto flex items-center py-1 text-sm">
             <p class="pr-2 text-white">
               {{ $t("deactivate") }}
@@ -71,7 +71,9 @@ export default {
   name: "FarmModal",
   data() {
     return {
-      toast: useToast()
+      toast: useToast(),
+      loading1: false,
+      loading2: false
     }
   },
   computed: {
@@ -87,50 +89,76 @@ export default {
     closeModal() {
       this.$emit("close");
     },
-    deactivate(){
-      const data = {
-        initData: this.getInitData,
-        t: "asic",
-        a: "deactivate",
-        asic_id: this.item?.asic?.id
-      }
-      axios.post('https://tonminefarm.com/request', data).then(res => {
-        if(res.data.status == 200){
-          this.toast.success('Успешно деактивировано!');
-          this.getFarmData()
-          this.$emit("close");
-        }
-      })
-    },
     getFarmData(){
       let data = {
         initData: this.getInitData,
         t: "farm",
         a: "get",
       };
-      axios.post("https://tonminefarm.com/request", data).then((res) => {
+      axios.post("https://api.tonminefarm.com/request", data).then((res) => {
         if (res.data.status === 200) {
           this.$store.commit('setFarm', res?.data?.data)
+        } else{
+          this.toast.error(res.data.status_text);
         }
       });
     },
-    repair(){
-      let data = {
-        initData: this.getInitData,
-        t: "asic",
-        a: "repair",
-        asic_id: this.item?.asic?.id
+    async deactivate() {
+      if (this.loading1) return; // Защита от повторного вызова
+      this.loading1 = true;
+      const data = {
+          initData: this.getInitData,
+          t: "asic",
+          a: "deactivate",
+          asic_id: this.item?.asic?.id,
       };
-      axios.post("https://tonminefarm.com/request", data).then((res) => {
-        if (res.data.status === 200) {
-          this.getFarmData();
-          this.toast.success('Отправлен в ремонт');
-          this.$emit("close");
-          this.$router.push({ name: "workshop", query: { id: res?.data?.asic?.workstation_slot_id } });
-        } else{
-          this.toast.error(res.data.status_text)
-        }
-      });
+      try {
+          const res = await axios.post("https://api.tonminefarm.com/request", data);
+          if (res.data.status === 200) {
+              const message = this.$i18n.locale === 'ru' 
+                  ? 'Успешно деактивировано!' 
+                  : 'Successfully deactivated!';
+              this.toast.success(message);
+              this.getFarmData();
+              this.$emit("close");
+          } else {
+              this.toast.error(res.data.status_text);
+          }
+      } catch (error) {
+          console.error(error);
+          this.toast.error('Произошла ошибка');
+      } finally {
+          this.loading1 = false;
+      }
+    },
+    async repair() {
+      if (this.loading2) return; // Защита от повторного вызова
+      this.loading2 = true;
+      const data = {
+          initData: this.getInitData,
+          t: "asic",
+          a: "repair",
+          asic_id: this.item?.asic?.id,
+      };
+      try {
+          const res = await axios.post("https://api.tonminefarm.com/request", data);
+          if (res.data.status === 200) {
+              this.getFarmData();
+              const message = this.$i18n.locale === 'ru' 
+                  ? 'Отправлен в ремонт.' 
+                  : 'Sent for repair.';
+              this.toast.success(message);
+              this.$emit("close");
+              this.$router.push({ name: "workshop", query: { id: res?.data?.asic?.workstation_slot_id } });
+          } else {
+              this.toast.error(res.data.status_text);
+          }
+      } catch (error) {
+          console.error(error);
+          this.toast.error('Произошла ошибка');
+      } finally {
+          this.loading2 = false;
+      }
     }
   },
 };

@@ -1,8 +1,8 @@
 <template>
     <div class="grid grid-cols-2 gap-5 py-4" v-if="getFarm">
         <div class="relative">
-            <h5 class="text-center font-patsy text-lg"><span class="text-white">{{ $t("level") }} {{ getFarm?.grade?.level }}</span>/{{ getFarm?.max_up?.level }}</h5>
-            <div class="w-40 mt-8">
+            <h5 class="text-center font-patsy text-lg"><span class="text-white">{{ $t("building-grade") }} {{ getFarm?.grade?.level }}</span>/{{ getFarm?.max_up?.level }}</h5>
+            <div class="cgrade-image">
                 <img class="w-full" :src="getFarm?.grade?.image" />
             </div>
             <div class="bg-shape-radial--fuchsia h-28 w-80 blur-3xl"></div>
@@ -11,7 +11,7 @@
             <div class="flex py-1">
                 <img class="h-9 w-9 flex-shrink-0 grayscale" src="@/assets/images/icons/generator.png" v-if="getFarm?.ups == 0" />
                 <img class="h-9 w-9 flex-shrink-0" :src="getFarm?.ups_image" v-else />
-                <div class="pl-3">
+                <div class="pl-1">
                     <p class="text-xs">{{ $t("ups") }}</p>
                     <p class="font-geist-mono text-xs font-semibold">
                         <span v-if="getFarm?.ups == 0">{{ $t("not-installed") }}</span>
@@ -21,19 +21,19 @@
             </div>
             <div class="main-blue-gradient"></div>
             <div class="flex py-1">
-                <img class="h-9 w-9 flex-shrink-0" src="@/assets/images/mining-speed.svg" />
+                <img class="mining-speed flex-shrink-0" src="@/assets/images/mining-speed.svg" />
                 <div class="pl-3">
                     <p class="text-xs">
                     {{ $t("income-hour") }}
                     </p>
                     <p class="font-geist-mono font-semibold text-cyan-400">
-                    {{ getFarm?.earn_per_hour }} <span class="text-xs">TON</span>
+                    {{ getFarm?.earn_per_hour }} <span class="text-xs">TON</span> (+{{ formatPercent(getFarm?.level?.percent) }})
                     </p>
                 </div>
             </div>
             <div class="main-blue-gradient"></div>
             <div class="flex py-1 items-center">
-                <img class="h-9 w-9 flex-shrink-0" src="@/assets/images/icons/ton-slate.png" />
+                <img class="h-7 w-7 flex-shrink-0" src="@/assets/images/icons/ton-slate.png" />
                 <div class="pl-3">
                     <p class="text-xs">
                     {{ $t("uninterrupted-operation") }}
@@ -45,10 +45,10 @@
             </div>
             <div class="main-blue-gradient"></div>
             <div class="flex py-1">
-                <img class="h-8 w-8 flex-shrink-0" src="@/assets/images/icons/power-consumption.png" />
+                <img class="h-7 w-7 flex-shrink-0" src="@/assets/images/icons/power-consumption.png" />
                 <div class="pl-3">
                     <p class="text-xs">
-                    {{ $t("power-consumption") }}
+                        {{ $t("power-consumption") }}
                     </p>
                     <p class="font-geist-mono font-semibold text-cyan-400">
                     {{ getFarm?.energy_per_hour }}
@@ -61,6 +61,9 @@
         </div>
     </div>
     <div class="linear-border--slate relative mt-10 w-full p-4">
+        <router-link class="w-full rounded-xl border border-cyan-400/50 block" to="/bill-history?type=farm">
+            <p class="p-3 text-sm text-white">{{ $t("view-payments-history") }}</p>
+        </router-link>
         <div class="my-4 flex items-center gap-5 mb-8">
             <div class="linear-border--slate relative p-3 min-w-32 text-left">
                 <p class="text-xs">{{ $t("building-level") }}</p>
@@ -75,7 +78,7 @@
                     <div class="pb-2 pt-1">
                         <div class="line-progress" :style="'--width:' + progressPercent + '%'"></div>
                     </div>
-                    <button class="main-action--green" @click="boost">
+                    <button class="main-action--green" @click="boost" :disabled="loading1">
                         <div class="mx-auto flex items-center text-xs">
                             <p class="pr-2 text-white">{{ $t("boost.title") }}</p>
                             <p class="font-geist-mono font-semibold text-cyan-400">{{ boostCost.toFixed(2) }} TON</p>
@@ -124,13 +127,13 @@
             <div class="font-geist-mono text-2xl font-bold text-blue-400">{{ this.getFarm?.next_grade?.cost }} TON</div>
             </div>
         </div>
-        <button class="main-action--green mt-5" @click="goAction" v-if="variant == 1">
+        <button class="main-action--green mt-5" @click="goAction" v-if="variant == 1" :disabled="loading2">
             <div class="mx-auto flex items-center py-1 text-sm">
             <p class="pr-2 text-white">{{ $t("pay") }}</p>
             <p class="font-geist-mono font-semibold text-cyan-400">{{ this.getFarm?.next_level?.cost }} TON</p>
             </div>
         </button>
-        <button class="main-action--green mt-5" @click="goAction" v-else>
+        <button class="main-action--green mt-5" @click="goAction" v-else :disabled="loading2">
             <div class="mx-auto flex items-center py-1 text-sm">
             <p class="pr-2 text-white">{{ $t("pay") }}</p>
             <p class="font-geist-mono font-semibold text-cyan-400">{{ this.getFarm?.next_grade?.cost }} TON</p>
@@ -155,7 +158,9 @@ export default {
             toast: useToast(),
             variant: 0,
             intervalId: null,
-            remainingTime: null
+            remainingTime: null,
+            loading1: false,
+            loading2: false
         }
     },
     computed: {
@@ -179,7 +184,7 @@ export default {
         }
     },
     mounted() {
-        if(!this.getFarm){
+        if(this.getInitData){
             this.getFarmData()
         }
         this.updateTimer();
@@ -192,27 +197,38 @@ export default {
                 t: "farm",
                 a: "get",
             };
-            axios.post("https://tonminefarm.com/request", data).then((res) => {
+            axios.post("https://api.tonminefarm.com/request", data).then((res) => {
                 if (res.data.status === 200) {
                     this.$store.commit('setFarm', res?.data?.data)
+                } else{
+                    this.toast.error(res.data.status_text);
                 }
             });
         },
         showModalHandle(variant){
             if(!this.getFarm.level.level == this.getFarm.max_level.level){
-                this.toast.error('Это максимальный уровень повысьте грейд!')
+                if(this.$i18n.locale == 'ru'){
+                    this.toast.error('Это максимальный уровень повысьте грейд!')
+                } else{
+                    this.toast.error('This is the maximum level, upgrade the grade!')
+                }
             } else{
                 this.showModal = true;
                 this.item = this.getFarm;
                 this.variant = variant
+                this.$store.commit('setShowModal', true)
             }
         },
         closeModal() {
             this.showModal = false;
+            this.$store.commit('setShowModal', false)
             this.item = null;
         },
         pad(value) {
             return value < 10 ? '0' + value : value;
+        },
+        formatPercent(value){
+            return `${Math.round(parseFloat(value))}%`;
         },
         updateTimer() {
             const currentTime = Math.floor(Date.now() / 1000);
@@ -223,67 +239,66 @@ export default {
                 this.intervalId = null;
             }
         },
-        boost(){
-            let data = {
+        async boost() {
+            if (this.loading1) return; // Блокировка повторного вызова
+            this.loading1 = true;
+            const data = {
                 initData: this.getInitData,
                 t: "farm",
-                a: "boost_level"
+                a: "boost_level",
             };
-            axios.post("https://tonminefarm.com/request", data).then(res => {
+            try {
+                const res = await axios.post("https://api.tonminefarm.com/request", data);
                 if (res.data.status === 200) {
                     this.getFarmData();
-                    this.toast.success('Успешно! Вы ускорили');
+                    const message = this.$i18n.locale === 'ru' 
+                        ? 'Успешно! Вы ускорили.' 
+                        : 'Success! You have boosted.';
+                    this.toast.success(message);
                     this.updateTimer();
                     if (this.intervalId) {
                         clearInterval(this.intervalId);
                     }
                     this.intervalId = setInterval(this.updateTimer, 1000);
-                } else{
+                } else {
                     this.toast.error(res.data.status_text);
                 }
-            })
+            } catch (error) {
+                console.error(error);
+                this.toast.error('Произошла ошибка');
+            } finally {
+                this.loading1 = false; // Сброс состояния загрузки
+            }
         },
-        goAction(){
-            if(this.variant == 1){
-                let data = {
-                    initData: this.getInitData,
-                    t: "farm",
-                    a: "level_up"
-                };
-                axios.post("https://tonminefarm.com/request", data).then(res => {
-                    this.closeModal()
-                    if (res.data.status === 200) {
-                        this.getFarmData();
-                        this.toast.success('Вы перешли на следующий уровень!');
-                        this.updateTimer();
-                        if (this.intervalId) {
-                            clearInterval(this.intervalId);
-                        }
-                        this.intervalId = setInterval(this.updateTimer, 1000);
-                    } else{
-                        this.toast.error(res.data.status_text);
+        async goAction() {
+            this.loading2 = true;
+            const data = {
+                initData: this.getInitData,
+                t: "farm",
+                a: this.variant === 1 ? "level_up" : "grade_up",
+            };
+            try {
+                const res = await axios.post("https://api.tonminefarm.com/request", data);
+                this.closeModal();
+                if (res.data.status === 200) {
+                    this.getFarmData();
+                    const message = this.$i18n.locale === 'ru' 
+                        ? 'Вы перешли на следующий уровень!' 
+                        : 'You have moved to the next level!';
+                    this.toast.success(message);
+                    this.updateTimer();
+                    if (this.intervalId) {
+                        clearInterval(this.intervalId);
                     }
-                })
-            } else{
-                let data = {
-                    initData: this.getInitData,
-                    t: "farm",
-                    a: "grade_up"
-                };
-                axios.post("https://tonminefarm.com/request", data).then(res => {
-                    this.closeModal()
-                    if (res.data.status === 200) {
-                        this.getFarmData();
-                        this.toast.success('Вы перешли на следующий уровень!');
-                        this.updateTimer();
-                        if (this.intervalId) {
-                            clearInterval(this.intervalId);
-                        }
-                        this.intervalId = setInterval(this.updateTimer, 1000);
-                    } else{
-                        this.toast.error(res.data.status_text);
-                    }
-                })
+                    this.intervalId = setInterval(this.updateTimer, 1000);
+                } else {
+                    this.toast.error(res.data.status_text);
+                }
+            } catch (error) {
+                console.log(error);
+                this.toast.error('Произошла ошибка');
+            } finally {
+                this.loading2 = false;
             }
         }
     },
@@ -292,3 +307,9 @@ export default {
     }
 }
 </script>
+
+<style lang="scss" scoped>
+    .mining-speed{
+        width: 30px;
+    }
+</style>

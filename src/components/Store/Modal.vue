@@ -45,7 +45,7 @@
           </div>
         </div>
         <div class="pt-3">
-          <button @click="buyItem(modalType, item?.level)" class="main-action--green">
+          <button @click="buyItem(modalType, item?.level)" class="main-action--green" :disabled="loading1">
             <div class="mx-auto flex items-center py-1 text-sm">
               <p class="pr-2 text-white">{{ $t("buy") }}</p>
               <p class="font-geist-mono font-semibold text-cyan-400">{{ item?.cost }} TON</p>
@@ -66,7 +66,7 @@
             <div class="pb-1 text-[10px]" v-for="asic in item?.asics" :key="asic?.id">{{ asic?.model }}</div>
           </div>
         </div>
-        <button @click="buyLootbox(item)" class="main-action--green mt-10">
+        <button @click="buyLootbox(item)" class="main-action--green mt-10" :disabled="loading2">
           <div class="mx-auto flex items-center py-1 text-sm">
             <p class="pr-2 text-white">{{ $t("buy") }}</p>
             <p class="font-geist-mono font-semibold text-cyan-400">{{ item?.cost }} TON</p>
@@ -93,7 +93,7 @@
           </div>
         </div>
         <div class="pt-6">
-          <button @click="buyItem(item?.type, item?.level)" class="main-action--green">
+          <button @click="buyItem(item?.type, item?.level)" class="main-action--green" :disabled="loading1">
             <div class="mx-auto flex items-center py-1 text-sm">
               <p class="pr-2 text-white">{{ $t("buy") }}</p>
               <p class="font-geist-mono font-semibold text-cyan-400">{{ item?.cost }} TON</p>
@@ -129,7 +129,9 @@ export default {
       toast: useToast(),
       isVisible: false,
       win: null,
-      initData: null
+      initData: null,
+      loading1: false,
+      loading2: false
     };
   },
   components: {
@@ -149,85 +151,126 @@ export default {
     closeModal() {
       this.$emit("close");
     },
-    buyItem(type, level){
-      const data = {
-        initData: this.getInitData,
-        t: "shop",
-        a: "buy",
-        item: type,
-        level: level
-      }
-      axios.post('https://tonminefarm.com/request', data).then(res => {
-        if(res.data.status === 200){
-          let asic_id = res.data.asic_id
-          this.$emit("close");
-          if(type == 'asic'){
-            try {
-              const data = {
-                initData: this.getInitData,
-                t: "asic",
-                a: "activate",
-                asic_id: asic_id
-              }
-              axios.post('https://tonminefarm.com/request', data).then(res => {
-                if(res.data.status == 200){
-                  this.toast.success('Успешно активировано!');
-                  this.$router.push('/farm')
-                  this.getShopData();
-                } else{
-                  this.toast.error(res.data.status_text)
-                }
-              })
-            } catch (error) {
-              console.log(error)
-            }
-          } else{
-            this.toast.success('Успешно активировано!');
-            this.$router.push('/farm')
-            this.getShopData();
-          }
-        } else{
-          this.toast.error(res.data.status_text)
-        }
-      })
-    },
-    buyLootbox(item){
-      const data = {
-        initData: this.getInitData,
-        t: "shop",
-        a: "buy",
-        level: item?.level,
-        item: "loot_box"
-      }
-      axios.post('https://tonminefarm.com/request', data).then(res => {
-        if(res.data.status === 200){
-          this.win = res?.data?.win_asic
-          this.$emit("close");
-          this.getShopData();
-          confetti({
-            particleCount: 100, // Количество частиц конфетти
-            spread: 70,         // Распределение частиц
-            origin: { y: 0.6 }  // Место, откуда летят конфетти
-          });
-          this.$emit("close");
-          this.isVisible = true
-        } else{
-          this.toast.error(res.data.status_text)
-        }
-      })      
-    },
     getShopData(){
       let data = {
         initData: this.getInitData,
         t: "shop",
         a: "get",
       };
-      axios.post("https://tonminefarm.com/request", data).then((res) => {
+      axios.post("https://api.tonminefarm.com/request", data).then((res) => {
         if (res.data.status === 200) {
           this.$store.commit('setShop', res?.data?.data)
+        } else{
+          this.toast.error(res.data.status_text)
         }
       });
-    }
+    },
+    async buyItem(type, level) {
+      if (this.loading1) return; // Защита от повторного вызова
+      this.loading1 = true;
+      const data = {
+          initData: this.getInitData,
+          t: "shop",
+          a: "buy",
+          item: type,
+          level: level,
+      };
+
+      try {
+        const res = await axios.post("https://api.tonminefarm.com/request", data);
+
+        if (res.data.status === 200) {
+            const asic_id = res.data.asic_id;
+            this.$emit("close");
+
+            if (type === "asic") {
+                await this.activateAsic(asic_id);
+            } else {
+                this.showSuccessMessage();
+                this.$router.push("/farm");
+                this.getShopData();
+            }
+        } else {
+            this.toast.error(res.data.status_text);
+        }
+      } catch (error) {
+        console.error(error);
+        this.toast.error("Произошла ошибка при покупке.");
+      } finally {
+        this.loading1 = false;
+      }
+    },
+    async activateAsic(asic_id) {
+      const data = {
+          initData: this.getInitData,
+          t: "asic",
+          a: "activate",
+          asic_id,
+      };
+      try {
+          const res = await axios.post("https://api.tonminefarm.com/request", data);
+          if (res.data.status === 200) {
+              this.showSuccessMessage();
+              this.$router.push("/farm");
+              this.getShopData();
+          } else {
+              this.toast.error(res.data.status_text);
+          }
+      } catch (error) {
+          console.error(error);
+          this.toast.error("Произошла ошибка при активации.");
+      }
+    },
+    showSuccessMessage() {
+        const message = this.$i18n.locale === "ru" 
+            ? "Успешно активировано!" 
+            : "Successfully activated!";
+        this.toast.success(message);
+    },
+    async buyLootbox(item) {
+      if (this.loading2) return; // Защита от повторного вызова
+      this.loading2 = true;
+
+      const data = {
+          initData: this.getInitData,
+          t: "shop",
+          a: "buy",
+          level: item?.level,
+          item: "loot_box",
+      };
+
+      try {
+          const res = await axios.post("https://api.tonminefarm.com/request", data);
+
+          if (res.data.status === 200) {
+              this.win = res?.data?.win_asic;
+              this.$emit("close");
+              this.getShopData();
+              this.triggerConfetti();
+              this.isVisible = true;
+
+              try {
+                  await window.navigator.vibrate(200);
+              } catch (err) {
+                  console.warn("Vibration API not supported:", err);
+              }
+          } else {
+              this.toast.error(res.data.status_text);
+          }
+      } catch (error) {
+          console.error(error);
+          this.toast.error("Произошла ошибка при покупке лутбокса.");
+      } finally {
+          this.loading2 = false;
+      }
+    },
+    triggerConfetti() {
+        confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 },
+        });
+    },
   },
 };
 </script>

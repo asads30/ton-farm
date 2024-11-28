@@ -1,10 +1,31 @@
 <template>
+  <Loader :isLoading="isLoading" />
   <div class="homepage">
     <main class="!p-0 home">
       <div class="relative flex flex-col h-full">
         <div class="p-1">
-          <ProfileCard />
-          <div class="grid grid-cols-2 gap-2 py-2">
+          <div class="profile-card">
+            <div class="main-circle-gradient h-11 w-11 p-1">
+                <img class="rounded-[50%]" src="@/assets/images/avatars/01.png" />
+            </div>
+            <div class="pl-2 text-sm">
+                <p class="text-sm text-white">{{ info?.account?.first_name }}</p>
+                <p class="font-patsy text-amber-400">
+                #{{ info?.account?.level }}
+                </p>
+            </div>
+            <div class="profile-anime">
+              <img src="@/assets/images/profile-line.png" alt="">
+              <ProfileEmpty :animationData="lottieJson" />
+            </div>
+            <div class="ml-auto mr-6">
+                <div class="flex items-center font-geist-mono text-blue-400">
+                <p>{{ info?.account?.balance }}</p>
+                <span class="pl-2 text-xs">TON</span>
+                </div>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-2 py-2 main-anim">
             <div class="main-action--cyan">
               <img class="w-8" src="@/assets/images/icons/ton-hour.png" />
               <div class="pl-2">
@@ -34,7 +55,7 @@
             <img src="@/assets/images/main1.png" alt="">
           </router-link>
           <router-link to="/power-station" class="home-item">
-            <img :src="info?.powerstation?.grade?.image" alt="">
+            <img :src="info?.powerstation?.grade?.image" @load="onImageLoad" alt="">
             <div class="home-item-info">
               <div class="home-item-label">{{ $t("level") }} {{ info?.powerstation?.level?.level }}</div>
               <div class="home-item-label">{{ $t("grade") }} {{ info?.powerstation?.grade?.level }}</div>
@@ -75,25 +96,30 @@
 import axios from "axios";
 import Bottombar from "@/components/Bottombar.vue";
 import Modal from "@/components/Home/Modal.vue";
-import ProfileCard from "@/components/ProfileCard.vue";
 import confetti from 'canvas-confetti';
 import { useToast } from 'vue-toastification';
+import Loader from '@/components/Loader.vue';
+import ProfileEmpty from "@/components/ProfileEmpty.vue";
+import animationData from "@/assets/anim2.json";
 
 export default {
   name: "HomeView",
   data() {
     return {
       info: null,
-      isLoading: true,
+      isLoading: false,
       item: null,
       showModal: false,
-      toast: useToast()
+      toast: useToast(),
+      lottieJson: animationData,
+      loading: false
     };
   },
   components: {
     Bottombar,
     Modal,
-    ProfileCard
+    Loader,
+    ProfileEmpty
   },
   mounted() {
     let tg = window?.Telegram?.WebApp;
@@ -102,18 +128,16 @@ export default {
     tg.expand();
     if(tg.initData){
       this.$store.commit('setInitData', tg.initData)
-    } else{
-      let initData = 'user=%7B%22id%22%3A5850887936%2C%22first_name%22%3A%22Asadbek%22%2C%22last_name%22%3A%22Ibragimov%22%2C%22username%22%3A%22webmonster_uz%22%2C%22language_code%22%3A%22ru%22%2C%22allows_write_to_pm%22%3Atrue%7D&chat_instance=-1442677966141426206&chat_type=group&auth_date=1727613930&hash=08188303ad38ea8c0213a6df5da80738a9395e33ff55438820988a30274542f4'
-      this.$store.commit('setInitData', initData)
     }
     let data = {
-      initData: tg.initData ? tg.initData : "user=%7B%22id%22%3A5850887936%2C%22first_name%22%3A%22Asadbek%22%2C%22last_name%22%3A%22Ibragimov%22%2C%22username%22%3A%22webmonster_uz%22%2C%22language_code%22%3A%22ru%22%2C%22allows_write_to_pm%22%3Atrue%7D&chat_instance=-1442677966141426206&chat_type=group&auth_date=1727613930&hash=08188303ad38ea8c0213a6df5da80738a9395e33ff55438820988a30274542f4",
+      initData: tg.initData,
       t: "home",
       a: "get",
       ref: user?.start_param ? user?.start_param : 0,
     };
+    this.isLoading = true
     try {
-      axios.post("https://tonminefarm.com/request", data).then((res) => {
+      axios.post("https://api.tonminefarm.com/request", data).then((res) => {
         if (res.data.status === 200) {
           this.info = res?.data?.data;
           this.$i18n.locale = res?.data?.data?.account?.lang
@@ -125,20 +149,27 @@ export default {
               spread: 70,
               origin: { y: 0.6 }
             });
+            window.navigator.vibrate(200).then(res => {
+              console.log(res)
+            }).catch(err => {
+              console.log(err)
+            })
           }
+        } else{
+          this.toast.error(res.data.status_text);
         }
       });
     } catch (error) {
       console.error("Error fetching API data:", error);
-    }
-    window.onload = () => {
-      this.isLoading = false;
     }
   },
   methods: {
     closeModal(){
       this.showModal = false
       this.item = null
+    },
+    onImageLoad(){
+      this.isLoading = false
     }
   },
 };

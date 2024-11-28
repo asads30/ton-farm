@@ -73,7 +73,7 @@
   backdrop-filter: blur(7px);
   box-shadow: inset -2px -1px 9px 0 rgba(11, 197, 255, 0.55);
   background: linear-gradient(171deg, rgba(34, 39, 56, 0.21) 0%, rgba(5, 18, 51, 0.21) 100%),
-    url("../images/profile-card-bg.png") right 4px center / 80% no-repeat;
+    url("../images/profile-bg.png") right 4px center / 80% no-repeat;
   border-radius: 25px;
   padding: 3px;
 }
@@ -492,6 +492,11 @@ button:disabled {
 }
 .main-action--amber.not::after {
   background: linear-gradient(180deg, rgba(255, 157, 11, 0) 0%, rgba(255, 187, 11, 0.7) 100%);
+}
+
+.store-remont{
+  justify-content: center;
+  color: #fff;
 }
 
 [class^="bg-shape"],

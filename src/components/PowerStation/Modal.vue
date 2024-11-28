@@ -31,7 +31,7 @@
             {{ summ }} TON
         </div>
       </div>
-      <button class="main-action--green mt-5" @click="goDebt">
+      <button class="main-action--green mt-5" @click="goDebt" :disabled="loading1">
         <div class="mx-auto flex items-center py-1 text-sm">
           <p class="pr-2 text-white">{{ $t("pay") }}</p>
           <p class="font-geist-mono font-semibold text-cyan-400">{{ summ }} TON</p>
@@ -51,7 +51,8 @@ export default {
   name: "FarmModal",
   data() {
     return {
-      toast: useToast()
+      toast: useToast(),
+      loading1: false
     }
   },
   props: {
@@ -69,31 +70,47 @@ export default {
     closeModal() {
       this.$emit("close");
     },
-    goDebt(){
-      let data = {
-        initData: this.getInitData,
-        t: "powerstation",
-        a: "pay_debt"
-      };
-      axios.post("https://tonminefarm.com/request", data).then(res => {
-        if(res.data.status == 200){
-          this.$emit("close");
-          this.getPowerStationData()
-          this.toast.success('Вы успешно погасили долг!');
-        }
-      })
-    },
     getPowerStationData(){
       let data = {
         initData: this.getInitData,
         t: "powerstation",
         a: "get",
       };
-      axios.post("https://tonminefarm.com/request", data).then((res) => {
+      axios.post("https://api.tonminefarm.com/request", data).then((res) => {
         if (res.data.status === 200) {
           this.$store.commit('setPowerStation', res?.data?.data)
+        } else{
+          this.toast.error(res.data.status_text)
         }
       });
+    },
+    async goDebt() {
+      if (this.loading1) return; // Защита от повторного вызова
+      this.loading1 = true;
+      const data = {
+          initData: this.getInitData,
+          t: "powerstation",
+          a: "pay_debt",
+      };
+      try {
+          const res = await axios.post("https://api.tonminefarm.com/request", data);
+
+          if (res.data.status === 200) {
+              this.$emit("close");
+              this.getPowerStationData();
+              const message = this.$i18n.locale === 'ru' 
+                  ? 'Вы успешно погасили долг!' 
+                  : 'You have successfully paid off the debt!';
+              this.toast.success(message);
+          } else {
+              this.toast.error(res.data.status_text);
+          }
+      } catch (error) {
+          console.error(error);
+          this.toast.error('Произошла ошибка');
+      } finally {
+          this.loading1 = false;
+      }
     }
   },
 };
